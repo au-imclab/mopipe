@@ -1,0 +1,39 @@
+name: Create pre-release on PR merge
+
+on:
+  pull_request:
+    branches: 
+      - main
+    types: [closed]
+    
+jobs:
+  build:
+    if: ${{ github.event.pull_request.merged }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: |
+            3.9
+            3.10
+            3.11
+      - name: Set up pip cache
+        if: runner.os == 'Linux'
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-pip-
+      - name: Install Hatch
+        run: pipx install hatch
+      - name: Run tests
+        run: hatch run test
+      - name: Lint and Type check
+        run: hatch -e lint run all
+      - name: Build dist
+        run: hatch build
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
+          prerelease: true
