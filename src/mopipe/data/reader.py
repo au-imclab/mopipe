@@ -215,7 +215,7 @@ class MocapReader(AbstractReader):
         # rename the columns to the marker labels
         cols: list[str] = ["frame", "elapsed"]
         m: str
-        for m in self.metadata[MocapMetadata.marker_names]:
+        for m in self.metadata[str(MocapMetadata.marker_names)]:
             cols = [*cols, f"{m}_x", f"{m}_y", f"{m}_z"]
         df = df.set_axis(cols, axis="columns", copy=False)
 

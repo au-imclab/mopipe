@@ -50,6 +50,8 @@ path = "src/mopipe/__about__.py"
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "pandas",
+  "StrEnum; python_version < '3.11'",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
@@ -72,6 +74,8 @@ dependencies = [
   "black>=23.1.0",
   "mypy>=1.0.0",
   "ruff>=0.0.243",
+  "pandas",
+  "StrEnum; python_version < '3.11'",
 ]
 [tool.hatch.envs.lint.scripts]
 typing = "mypy --install-types --non-interactive {args:src/mopipe tests}"
