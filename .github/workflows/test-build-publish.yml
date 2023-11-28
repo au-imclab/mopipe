@@ -47,6 +47,7 @@ jobs:
         run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata build
       - name: Publish on PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        continue-on-error: true
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "dist/*"
