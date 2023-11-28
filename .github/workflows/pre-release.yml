@@ -29,14 +29,20 @@ jobs:
           path: ~/.cache/hatch
           key: ${{ runner.os }}-hatch-${{ hashFiles('pyproject.toml') }}
           restore-keys: ${{ runner.os }}-hatch-
+      - name: Set up hatch cache (data)
+        uses: actions/cache@v3
+        with:
+          path: ~/.hatchdata
+          key: ${{ runner.os }}-hatchdata-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-hatchdata-
       - name: Install Hatch
         run: pipx install hatch
       - name: Run tests
-        run: hatch run test
+        run: hatch --cache-dir ~/.cache/hatch --data-dir ~/.hatchdata run test
       - name: Lint and Type check
-        run: hatch -e lint run all
+        run: hatch --cache-dir ~/.cache/hatch --data-dir ~/.hatchdata -e lint run all
       - name: Build dist
-        run: hatch build
+        run: hatch --cache-dir ~/.cache/hatch --data-dir ~/.hatchdata build
       - uses: ncipollo/release-action@v1
         with:
           tag: "development-${{ github.sha }}"
