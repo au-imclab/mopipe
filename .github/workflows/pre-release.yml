@@ -26,9 +26,9 @@ jobs:
       - name: Set up hatch cache
         uses: actions/cache@v3
         with:
-          path: ~/.cache/hatch
-          key: ${{ runner.os }}-hatch-${{ hashFiles('pyproject.toml') }}
-          restore-keys: ${{ runner.os }}-hatch-
+          path: ~/.hatchcache
+          key: ${{ runner.os }}-hatchcache-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-hatchcache-
       - name: Set up hatch cache (data)
         uses: actions/cache@v3
         with:
@@ -38,11 +38,11 @@ jobs:
       - name: Install Hatch
         run: pipx install hatch
       - name: Run tests
-        run: hatch --cache-dir ~/.cache/hatch --data-dir ~/.hatchdata run test
+        run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata run test
       - name: Lint and Type check
-        run: hatch --cache-dir ~/.cache/hatch --data-dir ~/.hatchdata -e lint run all
+        run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata -e lint run all
       - name: Build dist
-        run: hatch --cache-dir ~/.cache/hatch --data-dir ~/.hatchdata build
+        run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata build
       - uses: ncipollo/release-action@v1
         with:
           tag: "development-${{ github.sha }}"
