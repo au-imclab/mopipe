@@ -2,7 +2,7 @@ name: Test, Build, Publish
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
     branches:
       - main
       - dev
@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: ci
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -21,17 +22,28 @@ jobs:
             3.10
             3.11
       - name: Set up pip cache
-        if: runner.os == 'Linux'
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
           restore-keys: ${{ runner.os }}-pip-
+      - name: Set up hatch cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.hatchcache
+          key: ${{ runner.os }}-hatchcache-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-hatchcache-
+      - name: Set up hatch cache (data)
+        uses: actions/cache@v3
+        with:
+          path: ~/.hatchdata
+          key: ${{ runner.os }}-hatchdata-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-hatchdata-
       - name: Install Hatch
         run: pipx install hatch
       - name: Run tests
-        run: hatch run test
+        run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata run test
       - name: Lint and Type check
-        run: hatch -e lint run all
+        run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata -e lint run all
       - name: Build dist
-        run: hatch build
+        run: hatch --cache-dir ~/.hatchcache --data-dir ~/.hatchdata build
