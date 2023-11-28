@@ -6,3 +6,4 @@ data/*
 __pycache__/
 .coverage
 .ruff_cache/
+dist/

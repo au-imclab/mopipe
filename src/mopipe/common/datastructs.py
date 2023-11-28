@@ -3,8 +3,15 @@
 This module contains the data structures used by the mopipe package.
 """
 
-from dataclasses import dataclass
-from enum import IntEnum, StrEnum
+import sys
+
+if sys.version_info >= (3, 11):
+    from enum import IntEnum, StrEnum
+else:
+    from enum import IntEnum
+
+    from strenum import StrEnum
+
 from pandas import DataFrame
 
 

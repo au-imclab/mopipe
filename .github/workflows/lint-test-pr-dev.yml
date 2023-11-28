@@ -1,10 +1,14 @@
-name: Create pre-release on Main (GH Only)
+name: Test, Build, Publish
 
 on:
-  push:
+  pull_request:
+    types: [opened, reopened]
     branches:
       - main
-    
+      - dev
+  push:
+    branches:
+      - dev
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,7 +35,3 @@ jobs:
         run: hatch -e lint run all
       - name: Build dist
         run: hatch build
-      - uses: ncipollo/release-action@v1
-        with:
-          artifacts: "dist/*"
-          prerelease: true
