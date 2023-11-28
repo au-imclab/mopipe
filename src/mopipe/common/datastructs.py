@@ -5,6 +5,7 @@ This module contains the data structures used by the mopipe package.
 
 import sys
 
+# Python 3.11 has built-in StrEnum
 if sys.version_info >= (3, 11):
     from enum import IntEnum, StrEnum
 else:
