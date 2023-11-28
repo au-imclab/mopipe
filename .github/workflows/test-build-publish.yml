@@ -2,10 +2,8 @@ name: Test, Build, Publish
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
+    tags:
+      - "v*" # When a tag like vx.x.x is pushed
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,8 +26,13 @@ jobs:
         run: pipx install hatch
       - name: Run tests
         run: hatch run test
+      - name: Lint and Type check
+        run: hatch -e lint run all
       - name: Build dist
         run: hatch build
       - name: Publish on PyPI
         if: github.ref == 'refs/heads/main'
         run: hatch publish
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
