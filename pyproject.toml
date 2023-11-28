@@ -38,10 +38,10 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/au-imclab-git/dance_project/mopipe"
-Documentation = "https://github.com/au-imclab-git/dance_project/mopipe/README.md"
-Issues = "https://github.com/unknown/dance_project/issues"
-Source = "https://github.com/au-imclab-git/dance_project/mopipe"
+"Homepage" = "https://github.com/au-imclab/mopipe"
+Documentation = "https://github.com/au-imclab/mopipe/README.md"
+Issues = "https://github.com/au-imclab/mopipe/issues"
+Source = "https://github.com/au-imclab/mopipe"
 
 [tool.hatch.version]
 path = "src/mopipe/__about__.py"
