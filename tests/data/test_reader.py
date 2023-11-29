@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import MocapMetadata
+from mopipe.common import MocapMetadataEntries
 from mopipe.data import MocapReader
 
 
@@ -15,8 +15,8 @@ def test_metadata():
     assert reader is not None
     metadata = reader.metadata
     assert metadata is not None
-    assert metadata[MocapMetadata.sample_rate] == 300
-    assert metadata[MocapMetadata.frame_count] == 30
+    assert metadata[MocapMetadataEntries.sample_rate] == 300
+    assert metadata[MocapMetadataEntries.frame_count] == 30
 
 
 def test_reader():
@@ -33,4 +33,4 @@ def test_reader():
     # ensure the right length
     # number of markers * 3 (x,y,z) + 1 (time)
     # frame number becomes the index
-    assert len(data.columns) == metadata[MocapMetadata.marker_count] * 3 + 1
+    assert len(data.columns) == metadata[MocapMetadataEntries.marker_count] * 3 + 1

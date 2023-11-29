@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import DataLevel, MocapMetadata
+from mopipe.common import DataLevel, MocapMetadataEntries
 from mopipe.common.qtm import parse_metadata_row
 
 
@@ -181,7 +181,7 @@ class MocapReader(AbstractReader):
                 self._parse_metadata_row(key, values)
                 # read the next line
                 line = file.readline()
-        if MocapMetadata.sample_rate not in self._metadata:
+        if MocapMetadataEntries.sample_rate not in self._metadata:
             err = f"Sample rate not found in {path}."
             raise ValueError(err)
         self._start_line = line_number
@@ -215,7 +215,7 @@ class MocapReader(AbstractReader):
         # rename the columns to the marker labels
         cols: list[str] = ["frame", "elapsed"]
         m: str
-        for m in self.metadata[str(MocapMetadata.marker_names)]:
+        for m in self.metadata[str(MocapMetadataEntries.marker_names)]:
             cols = [*cols, f"{m}_x", f"{m}_y", f"{m}_z"]
         df = df.set_axis(cols, axis="columns", copy=False)
 

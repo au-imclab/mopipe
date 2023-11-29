@@ -1,4 +1,4 @@
-from mopipe.data.experiment import ExperimentLevel, Experiment, Trial
+from mopipe.data import Experiment
 
 
 def test_levels():
@@ -8,6 +8,3 @@ def test_levels():
     assert ex.id == "test"
     assert ex.parent is None
     assert ex.child is None
-    
-
-
