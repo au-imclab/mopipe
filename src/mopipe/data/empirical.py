@@ -57,6 +57,10 @@ class EmpiricalData:
     def __getitem__(self, key: t.Union[str, int]) -> Series:
         return self.data[key]
 
+    def __init__(self, data: DataFrame, metadata: MetaData):
+        self.data = data
+        self.metadata = metadata
+
 
 class DiscreteData(EmpiricalData):
     """DiscreteData
@@ -83,3 +87,6 @@ class MocapTimeSeries(TimeseriesData):
     """
 
     metadata: MocapMetaData
+
+    def __init__(self, data: DataFrame, metadata: MocapMetaData):
+        super().__init__(data, metadata)

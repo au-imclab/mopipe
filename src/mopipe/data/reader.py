@@ -13,6 +13,7 @@ import pandas as pd
 
 from mopipe.common import DataLevel, MocapMetadataEntries
 from mopipe.common.qtm import parse_metadata_row
+from mopipe.data import EmpiricalData, MetaData, MocapMetaData, MocapTimeSeries
 
 
 class AbstractReader(ABC):
@@ -56,7 +57,8 @@ class AbstractReader(ABC):
         self._name = name
         self._sample_rate = sample_rate
         self._level = level
-        self._metadata: dict[str, t.Any] = {}
+        if self._metadata is None:
+            self._metadata: MetaData = MetaData()
 
     @property
     def source(self) -> t.Union[Path, pd.DataFrame]:
@@ -74,7 +76,7 @@ class AbstractReader(ABC):
         return self._allowed_extensions
 
     @property
-    def metadata(self) -> dict[str, t.Any]:
+    def metadata(self) -> MetaData:
         """The metadata for the data to be read."""
         return self._metadata
 
@@ -89,10 +91,10 @@ class AbstractReader(ABC):
         return self._level
 
     @abstractmethod
-    def read(self) -> t.Optional[pd.DataFrame]:
+    def read(self) -> t.Optional[EmpiricalData]:
         """Read the data from the source and return it as a dataframe."""
         if isinstance(self.source, pd.DataFrame):
-            return self.source
+            return EmpiricalData(self.source, self.metadata)
         return None
 
 
@@ -105,6 +107,7 @@ class MocapReader(AbstractReader):
 
     _start_line: int = 0
     _allowed_extensions: t.Final[list[str]] = [".tsv"]
+    _metadata: MocapMetaData
 
     def __init__(
         self,
@@ -127,6 +130,7 @@ class MocapReader(AbstractReader):
         level : DataLevel, optional
             The level of the data to be read.
         """
+        self._metadata = MocapMetaData()
         super().__init__(source, name, sample_rate, level, **kwargs)
         if not isinstance(self.source, pd.DataFrame):
             self._extract_metadata()
@@ -181,7 +185,7 @@ class MocapReader(AbstractReader):
                 self._parse_metadata_row(key, values)
                 # read the next line
                 line = file.readline()
-        if MocapMetadataEntries.sample_rate not in self._metadata:
+        if MocapMetadataEntries["sample_rate"] not in self._metadata:
             err = f"Sample rate not found in {path}."
             raise ValueError(err)
         self._start_line = line_number
@@ -215,7 +219,7 @@ class MocapReader(AbstractReader):
         # rename the columns to the marker labels
         cols: list[str] = ["frame", "elapsed"]
         m: str
-        for m in self.metadata[str(MocapMetadataEntries.marker_names)]:
+        for m in self.metadata[str(MocapMetadataEntries["marker_names"])]:
             cols = [*cols, f"{m}_x", f"{m}_y", f"{m}_z"]
         df = df.set_axis(cols, axis="columns", copy=False)
 
@@ -223,7 +227,12 @@ class MocapReader(AbstractReader):
         df.set_index("frame", inplace=True)
         return df
 
-    def read(self) -> pd.DataFrame:
+    @property
+    def metadata(self) -> MocapMetaData:
+        """The metadata for the data to be read."""
+        return self._metadata
+
+    def read(self) -> MocapTimeSeries:
         """Read the data from the source and return it as a dataframe.
 
         Returns
@@ -231,15 +240,16 @@ class MocapReader(AbstractReader):
         DataFrame
             The data read from the source.
         """
-        data = super().read()
-        if data is not None:
-            return data
+        if isinstance(self.source, pd.DataFrame):
+            ts = MocapTimeSeries(self.source, self.metadata)
+            return ts
 
         if isinstance(self.source, Path):
             if self.source.suffix not in self._allowed_extensions:
                 err = f"Invalid file extension: {self.source.suffix}."
                 err += f" Allowed extensions are: {self._allowed_extensions}"
                 raise ValueError(err)
-            return self._read_qtm_tsv()
+            ts = MocapTimeSeries(self._read_qtm_tsv(), self.metadata)
+            return ts
         err = f"Reading from {type(self.source)} is not yet implemented."
         raise NotImplementedError(err)

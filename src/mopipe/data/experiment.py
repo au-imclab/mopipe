@@ -42,7 +42,9 @@ class ExperimentLevel:
     @parent.setter
     def parent(self, parent: "ExperimentLevel") -> None:
         """Set the parent level."""
+        parent._child = self
         self._parent = parent
+        self.relevel_stack()
 
     @property
     def child(self) -> t.Optional["ExperimentLevel"]:
@@ -52,7 +54,9 @@ class ExperimentLevel:
     @child.setter
     def child(self, child: "ExperimentLevel") -> None:
         """Set the child level."""
+        child._parent = self
         self._child = child
+        self.relevel_stack()
 
     @property
     def depth(self) -> int:
@@ -127,7 +131,7 @@ class Experiment(ExperimentLevel):
 
 
 class Trial(ExperimentLevel):
-    _children = None
+    _child = None
 
     def __init__(self, trial_id: str) -> None:
         """Initialize a Trial."""
