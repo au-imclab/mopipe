@@ -65,7 +65,7 @@ class ExperimentLevel:
             self._child._parent = None
             logging.warning(
                 f"Overwriting child level {self._child.level_name} (ID: {self._child.level_id})"
-                f"with {child.level_name} ({child.l})."
+                f"with {child.level_name} ({child.level_id})."
             )
         child._parent = self
         self._child = child
