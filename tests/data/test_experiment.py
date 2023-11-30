@@ -1,3 +1,5 @@
+import pytest  # type: ignore
+
 from mopipe.data import Experiment, ExperimentLevel, Trial
 
 
@@ -49,3 +51,9 @@ def test_levels():
     assert trial.bottom() is trial
     assert ex.top() is ex
     assert ex.bottom() is trial
+
+    test = ExperimentLevel("test_level", "test_level")
+    with pytest.raises(ValueError):
+        trial.child = test
+    with pytest.raises(ValueError):
+        ex.parent = test

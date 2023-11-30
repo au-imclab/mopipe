@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import DataLevel, MocapMetadataEntries
+from mopipe.common import MocapMetadataEntries
 from mopipe.common.qtm import parse_metadata_row
 from mopipe.data import EmpiricalData, MetaData, MocapMetaData, MocapTimeSeries
 
@@ -35,7 +35,6 @@ class AbstractReader(ABC):
         source: t.Union[str, Path, pd.DataFrame],
         name: str,
         sample_rate: t.Optional[float] = None,
-        level: t.Optional[DataLevel] = None,
         **kwargs,
     ):
         """Initialize the AbstractReader.
@@ -48,15 +47,12 @@ class AbstractReader(ABC):
             The name of the data/experiment to be read.
         sample_rate : float, optional
             The sample rate of the data to be read.
-        level : DataLevel, optional
-            The level of the data to be read.
         """
         if isinstance(source, str):
             source = Path(source)
         self._source = source
         self._name = name
         self._sample_rate = sample_rate
-        self._level = level
         if self._metadata is None:
             self._metadata: MetaData = MetaData()
 
@@ -85,11 +81,6 @@ class AbstractReader(ABC):
         """The name of the data/experiment to be read."""
         return self._name
 
-    @property
-    def level(self) -> t.Optional[DataLevel]:
-        """The level of the data to be read."""
-        return self._level
-
     @abstractmethod
     def read(self) -> t.Optional[EmpiricalData]:
         """Read the data from the source and return it as a dataframe."""
@@ -114,7 +105,6 @@ class MocapReader(AbstractReader):
         source: t.Union[Path, pd.DataFrame],
         name: str,
         sample_rate: t.Optional[float] = None,
-        level: t.Optional[DataLevel] = None,
         **kwargs,
     ):
         """Initialize the MocapReader.
@@ -131,7 +121,7 @@ class MocapReader(AbstractReader):
             The level of the data to be read.
         """
         self._metadata = MocapMetaData()
-        super().__init__(source, name, sample_rate, level, **kwargs)
+        super().__init__(source, name, sample_rate, **kwargs)
         if not isinstance(self.source, pd.DataFrame):
             self._extract_metadata()
 
@@ -237,7 +227,7 @@ class MocapReader(AbstractReader):
 
         Returns
         -------
-        DataFrame
+        MocapTimeSeries
             The data read from the source.
         """
         if isinstance(self.source, pd.DataFrame):

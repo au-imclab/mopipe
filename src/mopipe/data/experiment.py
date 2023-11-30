@@ -1,5 +1,6 @@
 """Experiment structure classes."""
 
+import logging
 import typing as t
 
 
@@ -42,6 +43,12 @@ class ExperimentLevel:
     @parent.setter
     def parent(self, parent: "ExperimentLevel") -> None:
         """Set the parent level."""
+        if self._parent is not None:
+            self._parent._child = None
+            logging.warning(
+                f"Overwriting parent level {self._parent.level_name} (ID: {self._parent.level_id})"
+                f"with {parent.level_name} ({parent.level_id})."
+            )
         parent._child = self
         self._parent = parent
         self.relevel_stack()
@@ -54,6 +61,12 @@ class ExperimentLevel:
     @child.setter
     def child(self, child: "ExperimentLevel") -> None:
         """Set the child level."""
+        if self._child is not None:
+            self._child._parent = None
+            logging.warning(
+                f"Overwriting child level {self._child.level_name} "
+                f"with {child.level_name}."
+            )
         child._parent = self
         self._child = child
         self.relevel_stack()
@@ -137,7 +150,13 @@ class Trial(ExperimentLevel):
         """Initialize a Trial."""
         super().__init__("trial", trial_id)
 
-    def add_child(self, child: "ExperimentLevel") -> int:  # noqa: ARG002
-        """Add a child level."""
+    @property
+    def child(self) -> ExperimentLevel | None:
+        """Child level."""
+        return None
+
+    @child.setter
+    def child(self, child: t.Any) -> None:  # noqa: ARG002
+        """Set the child level."""
         msg = "A Trial cannot have a child level."
         raise ValueError(msg)
