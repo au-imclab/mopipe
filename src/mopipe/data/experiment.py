@@ -1,7 +1,27 @@
 """Experiment structure classes."""
 
 import logging
+import sys
 import typing as t
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum, auto
+else:
+    from enum import auto
+
+    from strenum import StrEnum
+
+if t.TYPE_CHECKING:
+    from mopipe.data import EmpiricalData
+
+from mopipe.data import MetaData
+
+
+class LDType(StrEnum):
+    """Type of data associated with a level."""
+
+    TIMESERIES = auto()
+    LEVELDATA = auto()
 
 
 class ExperimentLevel:
@@ -14,16 +34,26 @@ class ExperimentLevel:
 
     _parent: t.Optional["ExperimentLevel"] = None
     _child: t.Optional["ExperimentLevel"] = None
-    _leveldata: t.Optional[list] = None
-    _timeseries: t.Optional[list] = None
+    _leveldata: list["EmpiricalData"]
+    _timeseries: list["EmpiricalData"]
+    _data_names_map: dict[str, t.Any]
+    _data_ids_map: dict[str, t.Any]
+    _level_metadata: "MetaData"
     _level_name: str
     _level_id: str
     _depth: int = 1
 
-    def __init__(self, level_name: str, level_id: str) -> None:
+    def __init__(self, level_name: str, level_id: str, level_metadata: t.Optional[MetaData] = None) -> None:
         """Initialize an ExperimentLevel."""
         self._level_name = level_name
         self._level_id = level_id
+        self._leveldata = []
+        self._timeseries = []
+        self._level_metadata = level_metadata if level_metadata is not None else MetaData()
+        self._data_names_map = {
+            LDType.TIMESERIES: {},
+            LDType.LEVELDATA: {},
+        }
 
     @property
     def level_name(self) -> str:
@@ -75,6 +105,107 @@ class ExperimentLevel:
     def depth(self) -> int:
         """Depth of the level."""
         return self._depth
+
+    def _update_data_map(self, data_id: str, data_name: str, idx: int, ld_type: LDType) -> None:
+        """Update the appropriate data maps."""
+        if data_name in self._data_names_map[ld_type]:
+            logging.warn(f"Data name {data_name} already exists in level {self.level_name} (ID: {self.level_id}).")
+            if not isinstance(self._data_names_map[ld_type][data_name], list):
+                msg = f"Expected data name to be a list, but got {type(self._data_names_map[ld_type][data_name])}."
+                raise RuntimeError(msg)
+            # compare to see if it is the same object, if so, then we should raise an error
+            for existing_idx in self._data_names_map[ld_type][data_name]:
+                if self._leveldata[existing_idx] is self._leveldata[idx]:
+                    msg = (
+                        f"Data name {data_name} already exists in level {self.level_name} (ID: {self.level_id}),"
+                        f" but the data object is the same."
+                    )
+                    raise ValueError(msg)
+            # add it if the existing data is not the same object
+            self._data_names_map[ld_type][data_name].append(idx)
+        else:
+            self._data_names_map[ld_type][data_name] = idx
+
+        if data_id in self._data_ids_map[ld_type]:
+            logging.warn(
+                f"Data ID {data_id} already exists in level {self.level_name} (ID: {self.level_id})."
+                " Be careful using differing data with the same ID."
+            )
+            if not isinstance(self._data_ids_map[ld_type][data_id], list):
+                msg = f"Expected data ID to be a list, but got {type(self._data_ids_map[ld_type][data_id])}."
+                raise RuntimeError(msg)
+            # compare to see if it is the same object, if so, then we should raise an error
+            for existing_idx in self._data_ids_map[ld_type][data_id]:
+                if self._leveldata[existing_idx] is self._leveldata[idx]:
+                    msg = (
+                        f"Data ID {data_id} already exists in level {self.level_name} (ID: {self.level_id}),"
+                        f" but the data object is the same."
+                    )
+                    raise ValueError(msg)
+            # add it if the existing data is not the same object
+            self._data_ids_map[ld_type][data_id].append(idx)
+        else:
+            self._data_ids_map[ld_type][data_id] = idx
+
+    def _new_data_added(self, data: "EmpiricalData", ld_type: LDType) -> None:
+        """New data was added to the level.
+
+        Update the appropriate data maps.
+        """
+        idx = (len(self._timeseries) - 1) if ld_type == LDType.TIMESERIES else (len(self._leveldata) - 1)
+        data_id = data.data_id
+        data_name = data.name
+        self._update_data_map(data_id, data_name, idx, ld_type)
+
+    def _remap_data(self, ld_type: LDType) -> None:
+        """Remap the data."""
+        self._data_names_map[ld_type] = {}
+        self._data_ids_map[ld_type] = {}
+        items = self._timeseries if ld_type == LDType.TIMESERIES else self._leveldata
+        for idx, data in enumerate(items):
+            data_id = data.data_id
+            data_name = data.name
+            self._update_data_map(data_id, data_name, idx, ld_type)
+
+    @property
+    def leveldata(self) -> list["EmpiricalData"]:
+        """Level data."""
+        return self._leveldata
+
+    @leveldata.setter
+    def leveldata(self, leveldata: t.Iterable["EmpiricalData"]) -> None:
+        """Set the level data."""
+        self._leveldata = list(leveldata)
+
+    def add_leveldata(self, leveldata: "EmpiricalData") -> None:
+        """Add level data to the level."""
+        self._leveldata.append(leveldata)
+        self._new_data_added(leveldata, LDType.LEVELDATA)
+
+    @property
+    def timeseries(self) -> list["EmpiricalData"]:
+        """Timeseries data."""
+        return self._timeseries
+
+    @timeseries.setter
+    def timeseries(self, timeseries: t.Iterable["EmpiricalData"]) -> None:
+        """Set the timeseries data."""
+        self._timeseries = list(timeseries)
+
+    def add_timeseries(self, timeseries: "EmpiricalData") -> None:
+        """Add a timeseries to the level."""
+        self._timeseries.append(timeseries)
+        self._new_data_added(timeseries, LDType.TIMESERIES)
+
+    @property
+    def level_metadata(self) -> "MetaData":
+        """Level metadata."""
+        return self._level_metadata
+
+    @level_metadata.setter
+    def level_metadata(self, level_metadata: "MetaData") -> None:
+        """Set the level metadata."""
+        self._level_metadata = level_metadata
 
     def climb(self) -> t.Iterator["ExperimentLevel"]:
         """Climb the experiment structure."""

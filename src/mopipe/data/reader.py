@@ -8,6 +8,7 @@ readers.
 import typing as t
 from abc import ABC, abstractmethod
 from pathlib import Path
+from uuid import uuid4
 
 import pandas as pd
 
@@ -34,6 +35,7 @@ class AbstractReader(ABC):
         self,
         source: t.Union[str, Path, pd.DataFrame],
         name: str,
+        data_id: t.Optional[str] = None,
         sample_rate: t.Optional[float] = None,
         **kwargs,
     ):
@@ -45,6 +47,9 @@ class AbstractReader(ABC):
             The source of the data to be read.
         name : str
             The name of the data/experiment to be read.
+        data_id : str, optional
+            The id of the data to be read.
+            If not provided, a random id will be generated.
         sample_rate : float, optional
             The sample rate of the data to be read.
         """
@@ -52,6 +57,9 @@ class AbstractReader(ABC):
             source = Path(source)
         self._source = source
         self._name = name
+        if data_id is None:
+            data_id = name + "_" + str(uuid4())
+        self._data_id = data_id
         self._sample_rate = sample_rate
         if self._metadata is None:
             self._metadata: MetaData = MetaData()
@@ -81,11 +89,16 @@ class AbstractReader(ABC):
         """The name of the data/experiment to be read."""
         return self._name
 
+    @property
+    def data_id(self) -> str:
+        """The id of the data/experiment to be read."""
+        return self._data_id
+
     @abstractmethod
     def read(self) -> t.Optional[EmpiricalData]:
         """Read the data from the source and return it as a dataframe."""
         if isinstance(self.source, pd.DataFrame):
-            return EmpiricalData(self.source, self.metadata)
+            return EmpiricalData(self.source, self.metadata, self.name, self.data_id)
         return None
 
 
@@ -104,6 +117,7 @@ class MocapReader(AbstractReader):
         self,
         source: t.Union[Path, pd.DataFrame],
         name: str,
+        data_id: t.Optional[str] = None,
         sample_rate: t.Optional[float] = None,
         **kwargs,
     ):
@@ -121,7 +135,7 @@ class MocapReader(AbstractReader):
             The level of the data to be read.
         """
         self._metadata = MocapMetaData()
-        super().__init__(source, name, sample_rate, **kwargs)
+        super().__init__(source, name, data_id, sample_rate, **kwargs)
         if not isinstance(self.source, pd.DataFrame):
             self._extract_metadata()
 
@@ -231,7 +245,7 @@ class MocapReader(AbstractReader):
             The data read from the source.
         """
         if isinstance(self.source, pd.DataFrame):
-            ts = MocapTimeSeries(self.source, self.metadata)
+            ts = MocapTimeSeries(self.source, self.metadata, self.name, self.data_id)
             return ts
 
         if isinstance(self.source, Path):
@@ -239,7 +253,7 @@ class MocapReader(AbstractReader):
                 err = f"Invalid file extension: {self.source.suffix}."
                 err += f" Allowed extensions are: {self._allowed_extensions}"
                 raise ValueError(err)
-            ts = MocapTimeSeries(self._read_qtm_tsv(), self.metadata)
+            ts = MocapTimeSeries(self._read_qtm_tsv(), self.metadata, self.name, self.data_id)
             return ts
         err = f"Reading from {type(self.source)} is not yet implemented."
         raise NotImplementedError(err)

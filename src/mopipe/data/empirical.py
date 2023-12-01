@@ -53,13 +53,19 @@ class EmpiricalData:
     data: DataFrame
     metadata: MetaData
     level: "ExperimentLevel"
+    name: str
+    data_id: str
 
     def __getitem__(self, key: t.Union[str, int]) -> Series:
         return self.data[key]
 
-    def __init__(self, data: DataFrame, metadata: MetaData):
+    def __init__(self, data: DataFrame, metadata: MetaData, name: str, data_id: t.Optional[str] = None):
         self.data = data
         self.metadata = metadata
+        self.name = name
+        if data_id is None:
+            data_id = name
+        self.data_id = data_id
 
 
 class DiscreteData(EmpiricalData):
@@ -88,5 +94,5 @@ class MocapTimeSeries(TimeseriesData):
 
     metadata: MocapMetaData
 
-    def __init__(self, data: DataFrame, metadata: MocapMetaData):
-        super().__init__(data, metadata)
+    def __init__(self, data: DataFrame, metadata: MocapMetaData, name: str, data_id: t.Optional[str] = None):
+        super().__init__(data, metadata, name, data_id)
