@@ -9,20 +9,20 @@ import typing as t
 from mopipe.segments import Segment
 
 
-class Pipeline(t.Sequence[Segment]):
+class Pipeline(t.MutableSequence[Segment]):
     """Pipeline
 
     A pipeline is a series of segments that are run on the data.
     """
 
-    _segments: list[Segment]
+    _segments: t.MutableSequence[Segment]
 
-    def __init__(self, segments: t.Optional[list[Segment]] = None) -> None:
+    def __init__(self, segments: t.Optional[t.MutableSequence[Segment]] = None) -> None:
         """Initialize a Pipeline."""
         self._segments = [] if segments is None else segments
 
     @property
-    def segments(self) -> list[Segment]:
+    def segments(self) -> t.MutableSequence[Segment]:
         """The segments in the pipeline."""
         return self._segments
 
@@ -39,7 +39,10 @@ class Pipeline(t.Sequence[Segment]):
         """Run the pipeline."""
         output = None
         for segment in self._segments:
-            output = segment(*args, **kwargs)
+            # most basic version here
+            # we could also keep track of the output from each step
+            # if that is useful, for now it's just I -> Segment -> O -> Segment -> O -> ...
+            kwargs["input"] = segment(*args, **kwargs)
         return output
 
     def __repr__(self) -> str:
@@ -50,7 +53,7 @@ class Pipeline(t.Sequence[Segment]):
         ...
 
     @t.overload
-    def __getitem__(self, index: slice) -> list[Segment]:
+    def __getitem__(self, index: slice) -> t.MutableSequence[Segment]:
         ...
 
     def __getitem__(self, index: t.Union[int, slice]):

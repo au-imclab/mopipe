@@ -5,8 +5,8 @@ Base segment class for all pipeline steps.
 
 import typing as t
 from abc import ABCMeta, abstractmethod
-from uuid import uuid4
 
+from mopipe.common.util import maybe_generate_id
 from mopipe.segments.io import IOType
 from mopipe.segments.segmenttypes import SegmentType
 
@@ -31,7 +31,7 @@ class Segment(metaclass=SegmentMeta):
     def __init__(self, name: str, segment_id: t.Optional[str] = None) -> None:
         """Initialize a Segment."""
         self._name = name
-        self._segment_id = name + str(uuid4()) if segment_id is None else segment_id
+        self._segment_id = maybe_generate_id(segment_id, prefix=name)
 
     @property
     def name(self) -> str:
