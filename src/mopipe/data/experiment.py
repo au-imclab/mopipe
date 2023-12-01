@@ -106,46 +106,32 @@ class ExperimentLevel:
         """Depth of the level."""
         return self._depth
 
+    def _update_map_entry(self, key: str, data_map: dict[str, list[int]], idx: int) -> None:
+        """Update a specific entry in the data map."""
+        if key in data_map:
+            logging.warn(f"Data {key} already exists in level {self.level_name} (ID: {self.level_id}).")
+            if not isinstance(data_map[key], list):
+                msg = f"Expected data {key} to be a list, but got {type(data_map[key])}."
+                raise RuntimeError(msg)
+
+            # compare to see if it is the same object, if so, then we should raise an error
+            for existing_idx in data_map[key]:
+                if self._leveldata[existing_idx] is self._leveldata[idx]:
+                    msg = (
+                        f"Data {key} already exists in level {self.level_name} (ID: {self.level_id}),"
+                        f" but the data object is the same."
+                    )
+                    raise ValueError(msg)
+
+            # add it if the existing data is not the same object
+            data_map[key].append(idx)
+        else:
+            data_map[key] = [idx]
+
     def _update_data_map(self, data_id: str, data_name: str, idx: int, ld_type: LDType) -> None:
         """Update the appropriate data maps."""
-        if data_name in self._data_names_map[ld_type]:
-            logging.warn(f"Data name {data_name} already exists in level {self.level_name} (ID: {self.level_id}).")
-            if not isinstance(self._data_names_map[ld_type][data_name], list):
-                msg = f"Expected data name to be a list, but got {type(self._data_names_map[ld_type][data_name])}."
-                raise RuntimeError(msg)
-            # compare to see if it is the same object, if so, then we should raise an error
-            for existing_idx in self._data_names_map[ld_type][data_name]:
-                if self._leveldata[existing_idx] is self._leveldata[idx]:
-                    msg = (
-                        f"Data name {data_name} already exists in level {self.level_name} (ID: {self.level_id}),"
-                        f" but the data object is the same."
-                    )
-                    raise ValueError(msg)
-            # add it if the existing data is not the same object
-            self._data_names_map[ld_type][data_name].append(idx)
-        else:
-            self._data_names_map[ld_type][data_name] = idx
-
-        if data_id in self._data_ids_map[ld_type]:
-            logging.warn(
-                f"Data ID {data_id} already exists in level {self.level_name} (ID: {self.level_id})."
-                " Be careful using differing data with the same ID."
-            )
-            if not isinstance(self._data_ids_map[ld_type][data_id], list):
-                msg = f"Expected data ID to be a list, but got {type(self._data_ids_map[ld_type][data_id])}."
-                raise RuntimeError(msg)
-            # compare to see if it is the same object, if so, then we should raise an error
-            for existing_idx in self._data_ids_map[ld_type][data_id]:
-                if self._leveldata[existing_idx] is self._leveldata[idx]:
-                    msg = (
-                        f"Data ID {data_id} already exists in level {self.level_name} (ID: {self.level_id}),"
-                        f" but the data object is the same."
-                    )
-                    raise ValueError(msg)
-            # add it if the existing data is not the same object
-            self._data_ids_map[ld_type][data_id].append(idx)
-        else:
-            self._data_ids_map[ld_type][data_id] = idx
+        self._update_map_entry(data_name, self._data_names_map[ld_type], idx)
+        self._update_map_entry(data_id, self._data_ids_map[ld_type], idx)
 
     def _new_data_added(self, data: "EmpiricalData", ld_type: LDType) -> None:
         """New data was added to the level.
