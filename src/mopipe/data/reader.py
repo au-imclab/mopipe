@@ -8,11 +8,10 @@ readers.
 import typing as t
 from abc import ABC, abstractmethod
 from pathlib import Path
-from uuid import uuid4
 
 import pandas as pd
 
-from mopipe.common import MocapMetadataEntries
+from mopipe.common import MocapMetadataEntries, maybe_generate_id
 from mopipe.common.qtm import parse_metadata_row
 from mopipe.data import EmpiricalData, MetaData, MocapMetaData, MocapTimeSeries
 
@@ -57,9 +56,7 @@ class AbstractReader(ABC):
             source = Path(source)
         self._source = source
         self._name = name
-        if data_id is None:
-            data_id = name + "_" + str(uuid4())
-        self._data_id = data_id
+        self._data_id = maybe_generate_id(data_id, prefix=name)
         self._sample_rate = sample_rate
         if self._metadata is None:
             self._metadata: MetaData = MetaData()

@@ -11,6 +11,8 @@ else:
 
     from strenum import StrEnum
 
+from mopipe.common import maybe_generate_id
+
 if t.TYPE_CHECKING:
     from mopipe.data import EmpiricalData
 
@@ -43,10 +45,12 @@ class ExperimentLevel:
     _level_id: str
     _depth: int = 1
 
-    def __init__(self, level_name: str, level_id: str, level_metadata: t.Optional[MetaData] = None) -> None:
+    def __init__(
+        self, level_name: str, level_id: t.Optional[str] = None, level_metadata: t.Optional[MetaData] = None
+    ) -> None:
         """Initialize an ExperimentLevel."""
         self._level_name = level_name
-        self._level_id = level_id
+        self._level_id = maybe_generate_id(level_id, prefix=level_name)
         self._leveldata = []
         self._timeseries = []
         self._level_metadata = level_metadata if level_metadata is not None else MetaData()
@@ -208,14 +212,24 @@ class ExperimentLevel:
     def top(self) -> "ExperimentLevel":
         """Get the top level."""
         if self._parent is None:
-            return self
-        return self._parent.top()
+            top = self
+        else:
+            top = self._parent.top()
+
+        if not isinstance(top, Experiment):
+            logging.warning(f"Top level of experiment {self.level_name} (ID: {self.level_id}) is not an Experiment.")
+        return top
 
     def bottom(self) -> "ExperimentLevel":
         """Get the bottom level."""
         if self._child is None:
-            return self
-        return self._child.bottom()
+            bottom = self
+        else:
+            bottom = self._child.bottom()
+
+        if not isinstance(bottom, Trial):
+            logging.warning(f"Bottom level of experiment {self.level_name} (ID: {self.level_id}) is not a Trial.")
+        return bottom
 
     def _relevel(self, depth: int) -> None:
         """Relevel the experiment structure."""

@@ -4,7 +4,7 @@ import typing as t
 
 from pandas import DataFrame, Series
 
-from mopipe.common import MocapMetadataEntries
+from mopipe.common import MocapMetadataEntries, maybe_generate_id
 
 if t.TYPE_CHECKING:
     from mopipe.data import ExperimentLevel
@@ -63,9 +63,7 @@ class EmpiricalData:
         self.data = data
         self.metadata = metadata
         self.name = name
-        if data_id is None:
-            data_id = name
-        self.data_id = data_id
+        self.data_id = maybe_generate_id(data_id, prefix=name)
 
 
 class DiscreteData(EmpiricalData):
