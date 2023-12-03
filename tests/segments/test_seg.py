@@ -17,8 +17,10 @@ class AnyAnySegment(AnyInput, AnyOutput, OtherType, Segment):
             return False
         return super().validate_input(*args, **kwargs)
 
-    def validate_output(self, output: Any) -> bool:  # noqa: ARG002
-        return False
+    def validate_output(self, output: Any) -> bool:
+        if output == "fail":
+            return False
+        return super().validate_output(output)
 
 
 class TestSegment:
@@ -47,4 +49,7 @@ class TestSegment:
 
     def test_call_invalid_output(self, segment: Segment) -> None:
         with pytest.raises(ValueError):
-            segment(1, 2, a=1, b=2, input=3)
+            segment(1, 2, a=1, b=2, input="fail")
+
+    def test_call_valid_input_and_output(self, segment: Segment) -> None:
+        assert segment(1, 2, a=1, b=2, input="output") == "output"
