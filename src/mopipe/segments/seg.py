@@ -43,9 +43,22 @@ class Segment(metaclass=SegmentMeta):
         """The id of the segment."""
         return self._segment_id
 
+    def _preprocess_input(self, *args, **kwargs) -> t.Any:
+        """Preprocess the input."""
+        return args, kwargs
+
+    def _postprocess_output(self, output: t.Any) -> t.Any:
+        """Postprocess the output."""
+        return output
+
     @abstractmethod
     def validate_input(self, *args, **kwargs) -> bool:
         """Validate the input."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def validate_output(self, output: t.Any) -> bool:
+        """Validate the output."""
         raise NotImplementedError
 
     @abstractmethod
@@ -76,4 +89,7 @@ class Segment(metaclass=SegmentMeta):
         if not self.validate_input(*args, **kwargs):
             msg = f"Invalid input for {self.name} segment."
             raise ValueError(msg)
-        return self.process(*args, **kwargs)
+        args, kwargs = self._preprocess_input(*args, **kwargs)
+        output = self.process(*args, **kwargs)
+        output = self._postprocess_output(output)
+        return output

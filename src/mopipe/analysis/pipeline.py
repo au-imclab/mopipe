@@ -26,6 +26,12 @@ class Pipeline(t.MutableSequence[Segment]):
         """The segments in the pipeline."""
         return self._segments
 
+    def _check_kwargs(self, **kwargs) -> None:
+        """Check the arguments for the pipeline."""
+        if "input" not in kwargs:
+            msg = "No input provided to pipeline."
+            raise ValueError(msg)
+
     def segment(self, index: int) -> Segment:
         """Get a segment from the pipeline."""
         return self._segments[index]
@@ -38,6 +44,7 @@ class Pipeline(t.MutableSequence[Segment]):
     def run(self, *args, **kwargs) -> t.Any:
         """Run the pipeline."""
         output = None
+        self._check_kwargs(**kwargs)
         for segment in self._segments:
             # most basic version here
             # we could also keep track of the output from each step
