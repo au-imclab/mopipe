@@ -89,8 +89,14 @@ class OtherOutput(OutputTypeBaseMixin):
 
     _output_type = IOType.OTHER
 
+    @abstractmethod
+    def _validate_other(self, x: t.Any) -> bool:
+        """Validate that the input is other type."""
+        msg = "Other input type must be implemented by subclass."
+        raise NotImplementedError(msg)
+
     def validate_output(self, output: t.Any) -> bool:
         """Validate the output."""
-        if not self._validate_any(output):
+        if not self._validate_other(output):
             return False
         return True

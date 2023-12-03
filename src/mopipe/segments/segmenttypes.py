@@ -4,12 +4,13 @@ from enum import Enum, auto
 class SegmentType(Enum):
     """Type of segment."""
 
-    PREPROCESSING = auto()
+    PREPROCESSOR = auto()
     SUMMARY = auto()
     TRANSFORM = auto()
     ANALYSIS = auto()
     VISUALIZATION = auto()
     WRITE = auto()
+    OTHER = auto()
 
 
 class SegmentTypeMixin:
@@ -23,37 +24,43 @@ class SegmentTypeMixin:
         return self._segment_type
 
 
-class PreprocessingMixin(SegmentTypeMixin):
+class PreprocessorType(SegmentTypeMixin):
     """Mixin class for preprocessing segments."""
 
-    _segment_type = SegmentType.PREPROCESSING
+    _segment_type = SegmentType.PREPROCESSOR
 
 
-class SummaryMixin(SegmentTypeMixin):
+class SummaryType(SegmentTypeMixin):
     """Mixin class for summary segments."""
 
     _segment_type = SegmentType.SUMMARY
 
 
-class TransformMixin(SegmentTypeMixin):
+class TransformType(SegmentTypeMixin):
     """Mixin class for transform segments."""
 
     _segment_type = SegmentType.TRANSFORM
 
 
-class AnalysisMixin(SegmentTypeMixin):
+class AnalysisType(SegmentTypeMixin):
     """Mixin class for analysis segments."""
 
     _segment_type = SegmentType.ANALYSIS
 
 
-class VisualizationMixin(SegmentTypeMixin):
+class VisualizationType(SegmentTypeMixin):
     """Mixin class for visualization segments."""
 
     _segment_type = SegmentType.VISUALIZATION
 
 
-class WriteMixin(SegmentTypeMixin):
+class WriteType(SegmentTypeMixin):
     """Mixin class for write segments."""
 
     _segment_type = SegmentType.WRITE
+
+
+class OtherType(SegmentTypeMixin):
+    """Mixin class for other segments."""
+
+    _segment_type = SegmentType.OTHER

@@ -57,6 +57,8 @@ class EmpiricalData:
     data_id: str
 
     def __getitem__(self, key: t.Union[str, int]) -> Series:
+        if isinstance(key, int):
+            return self.data.iloc[key]
         return self.data[key]
 
     def __init__(self, data: DataFrame, metadata: MetaData, name: str, data_id: t.Optional[str] = None):

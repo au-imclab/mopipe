@@ -1,5 +1,5 @@
+import math
 import typing as t
-from abc import abstractmethod
 from enum import Enum, auto
 
 import pandas as pd
@@ -63,23 +63,19 @@ class IOTypeBaseMixin:
         x: t.Union[pd.Series, pd.DataFrame],
         row_min: int = 1,
         col_min: int = 1,
-        row_max: t.Optional[int] = None,
-        col_max: t.Optional[int] = None,
+        row_max: t.Optional[t.Union[int, float]] = None,
+        col_max: t.Optional[t.Union[int, float]] = None,
     ) -> bool:
         """Validate that the input has the correct shape."""
         if row_max is None:
-            row_max = row_min
+            row_max = math.inf
         if col_max is None:
-            col_max = col_min
+            col_max = math.inf
         if row_min <= x.shape[0] <= row_max:
             if col_max == 1 and x.ndim == 1:
                 return True
+            if x.ndim == 1:
+                return False
             if col_min <= x.shape[1] <= col_max:
                 return True
         return False
-
-    @abstractmethod
-    def _validate_other(self, x: t.Any) -> bool:
-        """Validate that the input is anything."""
-        msg = "Other input type must be implemented by subclass."
-        raise NotImplementedError(msg)
