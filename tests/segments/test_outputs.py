@@ -89,3 +89,17 @@ class TestOtherOutput:
         value = 10
         with pytest.raises(NotImplementedError):
             other_output.validate_output(value)
+
+
+class TestOtherOutputImplementation:
+    class OtherOutputImplementation(OtherOutput):
+        def _validate_other(self, output: int) -> bool:  # noqa: ARG002
+            return True
+
+    @pytest.fixture
+    def other_output_implementation(self) -> OtherOutputImplementation:
+        return self.OtherOutputImplementation()
+
+    def test_validate_output_with_valid_output(self, other_output_implementation: OtherOutputImplementation):
+        value = 10
+        assert other_output_implementation.validate_output(value) is True

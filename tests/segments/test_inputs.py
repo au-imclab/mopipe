@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 import pytest  # type: ignore
 
@@ -88,3 +90,16 @@ class TestOtherInput:
     def test_validate_input_with_valid_input(self, other_input: OtherInput):
         with pytest.raises(NotImplementedError):
             other_input.validate_input(input=10)
+
+
+class TestOtherInputImplementation:
+    @pytest.fixture
+    def other_input(self) -> OtherInput:
+        class OtherInputImplementation(OtherInput):
+            def _validate_other(self, x: Any) -> bool:  # noqa: ARG002
+                return True
+
+        return OtherInputImplementation()  # type: ignore
+
+    def test_validate_input_with_valid_input(self, other_input: OtherInput):
+        assert other_input.validate_input(input=10) is True
