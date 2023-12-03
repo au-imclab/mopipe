@@ -46,6 +46,7 @@ class MultivariateSeriesInput(InputTypeBaseMixin):
             return False
         return True
 
+
 class SingleValueInput(InputTypeBaseMixin):
     """Mixin class for single value input segments."""
 

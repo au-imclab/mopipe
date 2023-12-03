@@ -33,6 +33,7 @@ class UnivariateSeriesOutput(OutputTypeBaseMixin):
             return False
         return True
 
+
 class MultivariateSeriesOutput(OutputTypeBaseMixin):
     """Mixin class for multivariate series output segments."""
 
@@ -46,6 +47,7 @@ class MultivariateSeriesOutput(OutputTypeBaseMixin):
             return False
         return True
 
+
 class SingleValueOutput(OutputTypeBaseMixin):
     """Mixin class for single value output segments."""
 
@@ -56,6 +58,7 @@ class SingleValueOutput(OutputTypeBaseMixin):
         if not self._validate_single_value(output):
             return False
         return True
+
 
 class MultiValueOutput(OutputTypeBaseMixin):
     """Mixin class for multiple values output segments."""

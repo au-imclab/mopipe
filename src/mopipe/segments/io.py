@@ -54,7 +54,7 @@ class IOTypeBaseMixin:
                 return True
         return False
 
-    def _validate_any(self, x: t.Any) -> bool:
+    def _validate_any(self, x: t.Any) -> bool:  # noqa: ARG002
         """Validate that the input is anything."""
         return True
 
