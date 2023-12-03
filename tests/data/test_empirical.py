@@ -1,5 +1,5 @@
 import pandas as pd
-import pytest
+import pytest  # type: ignore
 
 from mopipe.data.empirical import MocapMetaData, MocapTimeSeries
 
