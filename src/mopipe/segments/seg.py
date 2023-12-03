@@ -92,4 +92,7 @@ class Segment(metaclass=SegmentMeta):
         args, kwargs = self._preprocess_input(*args, **kwargs)
         output = self.process(*args, **kwargs)
         output = self._postprocess_output(output)
+        if not self.validate_output(output):
+            msg = f"Invalid output generated for {self.name} segment."
+            raise ValueError(msg)
         return output
