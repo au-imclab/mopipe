@@ -246,7 +246,7 @@ class ExperimentLevel:
         top level will be 1.
         """
         top = self.top()
-        depth = 0 if type(top) is Experiment else 1
+        depth = 0 if isinstance(top, Experiment) else 1
         top._relevel(depth)
 
     def relevel_children(self) -> None:
