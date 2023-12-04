@@ -1,4 +1,4 @@
-name: Test, Build, Publish
+name: Test and Lint (PRs and dev branch)
 
 on:
   pull_request:

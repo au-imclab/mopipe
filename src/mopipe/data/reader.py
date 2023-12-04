@@ -11,8 +11,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import DataLevel, MocapMetadata
+from mopipe.common import MocapMetadataEntries, maybe_generate_id
 from mopipe.common.qtm import parse_metadata_row
+from mopipe.data import EmpiricalData, MetaData, MocapMetaData, MocapTimeSeries
 
 
 class AbstractReader(ABC):
@@ -33,8 +34,8 @@ class AbstractReader(ABC):
         self,
         source: t.Union[str, Path, pd.DataFrame],
         name: str,
+        data_id: t.Optional[str] = None,
         sample_rate: t.Optional[float] = None,
-        level: t.Optional[DataLevel] = None,
         **kwargs,
     ):
         """Initialize the AbstractReader.
@@ -45,18 +46,20 @@ class AbstractReader(ABC):
             The source of the data to be read.
         name : str
             The name of the data/experiment to be read.
+        data_id : str, optional
+            The id of the data to be read.
+            If not provided, a random id will be generated.
         sample_rate : float, optional
             The sample rate of the data to be read.
-        level : DataLevel, optional
-            The level of the data to be read.
         """
         if isinstance(source, str):
             source = Path(source)
         self._source = source
         self._name = name
+        self._data_id = maybe_generate_id(data_id, prefix=name)
         self._sample_rate = sample_rate
-        self._level = level
-        self._metadata: dict[str, t.Any] = {}
+        if self._metadata is None:
+            self._metadata: MetaData = MetaData()
 
     @property
     def source(self) -> t.Union[Path, pd.DataFrame]:
@@ -74,7 +77,7 @@ class AbstractReader(ABC):
         return self._allowed_extensions
 
     @property
-    def metadata(self) -> dict[str, t.Any]:
+    def metadata(self) -> MetaData:
         """The metadata for the data to be read."""
         return self._metadata
 
@@ -84,15 +87,15 @@ class AbstractReader(ABC):
         return self._name
 
     @property
-    def level(self) -> t.Optional[DataLevel]:
-        """The level of the data to be read."""
-        return self._level
+    def data_id(self) -> str:
+        """The id of the data/experiment to be read."""
+        return self._data_id
 
     @abstractmethod
-    def read(self) -> t.Optional[pd.DataFrame]:
+    def read(self) -> t.Optional[EmpiricalData]:
         """Read the data from the source and return it as a dataframe."""
         if isinstance(self.source, pd.DataFrame):
-            return self.source
+            return EmpiricalData(self.source, self.metadata, self.name, self.data_id)
         return None
 
 
@@ -105,13 +108,14 @@ class MocapReader(AbstractReader):
 
     _start_line: int = 0
     _allowed_extensions: t.Final[list[str]] = [".tsv"]
+    _metadata: MocapMetaData
 
     def __init__(
         self,
         source: t.Union[Path, pd.DataFrame],
         name: str,
+        data_id: t.Optional[str] = None,
         sample_rate: t.Optional[float] = None,
-        level: t.Optional[DataLevel] = None,
         **kwargs,
     ):
         """Initialize the MocapReader.
@@ -127,7 +131,8 @@ class MocapReader(AbstractReader):
         level : DataLevel, optional
             The level of the data to be read.
         """
-        super().__init__(source, name, sample_rate, level, **kwargs)
+        self._metadata = MocapMetaData()
+        super().__init__(source, name, data_id, sample_rate, **kwargs)
         if not isinstance(self.source, pd.DataFrame):
             self._extract_metadata()
 
@@ -181,7 +186,7 @@ class MocapReader(AbstractReader):
                 self._parse_metadata_row(key, values)
                 # read the next line
                 line = file.readline()
-        if MocapMetadata.sample_rate not in self._metadata:
+        if MocapMetadataEntries["sample_rate"] not in self._metadata:
             err = f"Sample rate not found in {path}."
             raise ValueError(err)
         self._start_line = line_number
@@ -215,7 +220,7 @@ class MocapReader(AbstractReader):
         # rename the columns to the marker labels
         cols: list[str] = ["frame", "elapsed"]
         m: str
-        for m in self.metadata[str(MocapMetadata.marker_names)]:
+        for m in self.metadata[str(MocapMetadataEntries["marker_names"])]:
             cols = [*cols, f"{m}_x", f"{m}_y", f"{m}_z"]
         df = df.set_axis(cols, axis="columns", copy=False)
 
@@ -223,23 +228,29 @@ class MocapReader(AbstractReader):
         df.set_index("frame", inplace=True)
         return df
 
-    def read(self) -> pd.DataFrame:
+    @property
+    def metadata(self) -> MocapMetaData:
+        """The metadata for the data to be read."""
+        return self._metadata
+
+    def read(self) -> MocapTimeSeries:
         """Read the data from the source and return it as a dataframe.
 
         Returns
         -------
-        DataFrame
+        MocapTimeSeries
             The data read from the source.
         """
-        data = super().read()
-        if data is not None:
-            return data
+        if isinstance(self.source, pd.DataFrame):
+            ts = MocapTimeSeries(self.source, self.metadata, self.name, self.data_id)
+            return ts
 
         if isinstance(self.source, Path):
             if self.source.suffix not in self._allowed_extensions:
                 err = f"Invalid file extension: {self.source.suffix}."
                 err += f" Allowed extensions are: {self._allowed_extensions}"
                 raise ValueError(err)
-            return self._read_qtm_tsv()
+            ts = MocapTimeSeries(self._read_qtm_tsv(), self.metadata, self.name, self.data_id)
+            return ts
         err = f"Reading from {type(self.source)} is not yet implemented."
         raise NotImplementedError(err)

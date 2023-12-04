@@ -75,6 +75,8 @@ dependencies = [
   "mypy>=1.0.0",
   "ruff>=0.0.243",
   "pandas",
+  "pandas-stubs",
+  "types_openpyxl",
   "StrEnum; python_version < '3.11'",
 ]
 [tool.hatch.envs.lint.scripts]

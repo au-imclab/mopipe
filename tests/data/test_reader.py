@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import MocapMetadata
-from mopipe.data import MocapReader
+from mopipe.common import MocapMetadataEntries
+from mopipe.data import MocapMetaData, MocapReader, MocapTimeSeries
 
 
 def test_metadata():
@@ -15,8 +15,8 @@ def test_metadata():
     assert reader is not None
     metadata = reader.metadata
     assert metadata is not None
-    assert metadata[MocapMetadata.sample_rate] == 300
-    assert metadata[MocapMetadata.frame_count] == 30
+    assert metadata[MocapMetadataEntries["sample_rate"]] == 300
+    assert metadata[MocapMetadataEntries["frame_count"]] == 30
 
 
 def test_reader():
@@ -25,12 +25,14 @@ def test_reader():
         name="test",
     )
     assert reader is not None
-    data = reader.read()
+    timeseries = reader.read()
     metadata = reader.metadata
-    assert data is not None
-    assert isinstance(data, pd.DataFrame)
-    assert len(data) == 30
+    assert timeseries is not None
+    assert isinstance(timeseries, MocapTimeSeries)
+    assert isinstance(timeseries.data, pd.DataFrame)
+    assert isinstance(metadata, MocapMetaData)
+    assert len(timeseries.data) == 30
     # ensure the right length
     # number of markers * 3 (x,y,z) + 1 (time)
     # frame number becomes the index
-    assert len(data.columns) == metadata[MocapMetadata.marker_count] * 3 + 1
+    assert len(timeseries.data.columns) == metadata[MocapMetadataEntries["marker_count"]] * 3 + 1
