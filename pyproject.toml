@@ -11,7 +11,8 @@ description = "MoPipe is a Python package for creating a motion capture data ana
 license = "MIT"
 keywords = []
 authors = [
-  { name = "zeyus", email = "zeyus@zeyus.com" },
+  { name = "zeyus (https://zeyus.com, https://github.com/zeyus)" },
+  { name = "Interacting Minds Centre, Aarhus University (https://interactingminds.au.dk)" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
