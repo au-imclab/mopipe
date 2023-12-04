@@ -120,6 +120,23 @@ class AnyOutput(OutputTypeBaseMixin):
         return True
 
 
+class NumericOutput(OutputTypeBaseMixin):
+    """Mixin class for numeric output segments,
+
+       Segments inheriting from this class must return a numeric output:
+       - A single int or float value
+       - A pandas Series or DataFrame with int or float values
+    """
+
+    _input_type = IOType.NUMERIC
+
+    def validate_output(self, output: t.Any) -> bool:
+        """Validate the input."""
+        if not self._validate_numeric(output):
+            return False
+        return True
+
+
 class OtherOutput(OutputTypeBaseMixin):
     """Mixin class for other output segments."""
 
