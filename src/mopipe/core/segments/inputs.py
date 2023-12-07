@@ -14,14 +14,14 @@ class InputTypeBaseMixin(IOTypeBaseMixin):
         """The type of the input."""
         return self._input_type
 
-    def _ensure_input_exists(self, *args, **kwargs) -> bool:  # noqa: ARG002
+    def _ensure_input_exists(self, **kwargs) -> bool:  # noqa: ARG002
         """Ensure that the input exists."""
-        if "input" in kwargs:
+        if "x" in kwargs:
             return True
         return False
 
     @abstractmethod
-    def validate_input(self, *args, **kwargs) -> bool:
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
         raise NotImplementedError
 
@@ -31,13 +31,13 @@ class UnivariateSeriesInput(InputTypeBaseMixin):
 
     _input_type = IOType.UNIVARIATE_SERIES
 
-    def validate_input(self, *args, **kwargs) -> bool:
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
-        if not self._ensure_input_exists(*args, **kwargs):
+        if not self._ensure_input_exists(**kwargs):
             return False
-        if not self._validate_series_or_dataframe(kwargs["input"]):
+        if not self._validate_series_or_dataframe(kwargs["x"]):
             return False
-        if not self._validate_shape(kwargs["input"], row_min=2, col_max=1):
+        if not self._validate_shape(kwargs["x"], row_min=2, col_max=1):
             return False
         return True
 
@@ -47,13 +47,13 @@ class MultivariateSeriesInput(InputTypeBaseMixin):
 
     _input_type = IOType.MULTIVARIATE_SERIES
 
-    def validate_input(self, *args, **kwargs) -> bool:
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
-        if not self._ensure_input_exists(*args, **kwargs):
+        if not self._ensure_input_exists(**kwargs):
             return False
-        if not self._validate_series_or_dataframe(kwargs["input"]):
+        if not self._validate_series_or_dataframe(kwargs["x"]):
             return False
-        if not self._validate_shape(kwargs["input"], row_min=2, col_min=2):
+        if not self._validate_shape(kwargs["x"], row_min=2, col_min=2):
             return False
         return True
 
@@ -63,11 +63,11 @@ class SingleValueInput(InputTypeBaseMixin):
 
     _input_type = IOType.SINGLE_VALUE
 
-    def validate_input(self, *args, **kwargs) -> bool:
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
-        if not self._ensure_input_exists(*args, **kwargs):
+        if not self._ensure_input_exists(**kwargs):
             return False
-        if not self._validate_single_value(kwargs["input"]):
+        if not self._validate_single_value(kwargs["x"]):
             return False
         return True
 
@@ -77,11 +77,52 @@ class MultiValueInput(InputTypeBaseMixin):
 
     _input_type = IOType.MULTIPLE_VALUES
 
-    def validate_input(self, *args, **kwargs) -> bool:
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
-        if not self._ensure_input_exists(*args, **kwargs):
+        if not self._ensure_input_exists(**kwargs):
             return False
-        if not self._validate_multiple_values(kwargs["input"]):
+        if not self._validate_multiple_values(kwargs["x"]):
+            return False
+        return True
+
+class SingleNumericValueInput(InputTypeBaseMixin):
+    """Mixin class for single numeric value input segments."""
+
+    _input_type = IOType.SINGLE_NUMERIC_VALUE
+
+    def validate_input(self, **kwargs) -> bool:
+        """Validate the input."""
+        if not self._ensure_input_exists(**kwargs):
+            return False
+        if not self._validate_single_numeric_value(kwargs["x"]):
+            return False
+        return True
+
+
+class AnySeriesInput(InputTypeBaseMixin):
+    """Mixin class for any series input segments."""
+
+    _input_type = IOType.ANY_SERIES
+
+    def validate_input(self, **kwargs) -> bool:
+        """Validate the input."""
+        if not self._ensure_input_exists(**kwargs):
+            return False
+        if not self._validate_any_series(kwargs["x"]):
+            return False
+        return True
+
+
+class AnyNumericInput(InputTypeBaseMixin):
+    """Mixin class for any numeric input segments."""
+
+    _input_type = IOType.ANY_NUMERIC
+
+    def validate_input(self, **kwargs) -> bool:
+        """Validate the input."""
+        if not self._ensure_input_exists(**kwargs):
+            return False
+        if not self._validate_any_numeric(kwargs["x"]):
             return False
         return True
 
@@ -91,11 +132,11 @@ class AnyInput(InputTypeBaseMixin):
 
     _input_type = IOType.ANY
 
-    def validate_input(self, *args, **kwargs) -> bool:
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
-        if not self._ensure_input_exists(*args, **kwargs):
+        if not self._ensure_input_exists(**kwargs):
             return False
-        if not self._validate_any(kwargs["input"]):
+        if not self._validate_any(kwargs["x"]):
             return False
         return True
 
@@ -111,8 +152,8 @@ class OtherInput(InputTypeBaseMixin):
         msg = "Other input type must be implemented by subclass."
         raise NotImplementedError(msg)
 
-    def validate_input(self, *args, **kwargs) -> bool:  # noqa: ARG002
+    def validate_input(self, **kwargs) -> bool:  # noqa: ARG002
         """Validate the input."""
-        if not self._validate_other(kwargs["input"]):
+        if not self._validate_other(kwargs["x"]):
             return False
         return True

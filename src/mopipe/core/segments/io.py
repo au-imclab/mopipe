@@ -2,6 +2,7 @@ import math
 import typing as t
 from enum import Enum, auto
 
+import numpy as np
 import pandas as pd
 
 
@@ -16,7 +17,10 @@ class IOType(Enum):
     MULTIVARIATE_SERIES = auto()
     SINGLE_VALUE = auto()
     MULTIPLE_VALUES = auto()
+    SINGLE_NUMERIC_VALUE = auto()
     ANY = auto()
+    ANY_SERIES = auto()
+    ANY_NUMERIC = auto()
     OTHER = auto()
 
 
@@ -51,6 +55,31 @@ class IOTypeBaseMixin:
         """Validate that the input is a list of values."""
         if isinstance(x, t.Sequence):
             if len(x) > 1:
+                return True
+        return False
+
+    def _validate_single_numeric_value(self, x: t.Any) -> bool:
+        """Validate that the input is a single numeric value."""
+        if isinstance(x, (int, float, np.number)):
+            return True
+        return False
+
+    def _validate_any_series(self, x: t.Any) -> bool:
+        """Validate that the input is any series."""
+        if self._validate_series_or_dataframe(x):
+            if self._validate_shape(x, row_min=1, col_min=1):
+                return True
+        return False
+
+    def _validate_any_numeric(self, x: t.Any) -> bool:
+        """Validate that the input is any numeric value."""
+        if isinstance(x, (int, float)):
+            return True
+        if self._validate_series(x):
+            if x.dtype in [int, float]:
+                return True
+        if self._validate_dataframe(x):
+            if x.dtypes.apply(lambda x: x in [int, float]).all():
                 return True
         return False
 

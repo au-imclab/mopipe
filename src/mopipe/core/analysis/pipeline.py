@@ -41,7 +41,7 @@ class Pipeline(t.MutableSequence[Segment]):
         self._segments.append(segment)
         return len(self._segments) - 1
 
-    def run(self, *args, **kwargs) -> t.Any:
+    def run(self, **kwargs) -> t.Any:
         """Run the pipeline."""
         output = None
         self._check_kwargs(**kwargs)
@@ -49,7 +49,7 @@ class Pipeline(t.MutableSequence[Segment]):
             # most basic version here
             # we could also keep track of the output from each step
             # if that is useful, for now it's just I -> Segment -> O -> Segment -> O -> ...
-            kwargs["input"] = segment(*args, **kwargs)
+            kwargs["x"] = segment(**kwargs)
         return output
 
     def __repr__(self) -> str:
