@@ -1,7 +1,7 @@
 import typing as t
 from abc import abstractmethod
 
-from mopipe.segments.io import IOType, IOTypeBaseMixin
+from mopipe.core.segments.io import IOType, IOTypeBaseMixin
 
 
 class OutputTypeBaseMixin(IOTypeBaseMixin):

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Any
 
-from mopipe.segments.io import IOType, IOTypeBaseMixin
+from mopipe.core.segments.io import IOType, IOTypeBaseMixin
 
 
 class InputTypeBaseMixin(IOTypeBaseMixin):

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from mopipe.data import MocapReader
-from mopipe.data.collator import MocapDataCollator
+from mopipe.core.data import MocapReader
+from mopipe.core.data.collator import MocapDataCollator
 
 
 def test_collator():

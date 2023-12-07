@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest  # type: ignore
 
-from mopipe.segments.outputs import (
+from mopipe.core.segments.outputs import (
     AnyOutput,
     MultiValueOutput,
     MultivariateSeriesOutput,

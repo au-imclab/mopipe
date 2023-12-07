@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 import pytest  # type: ignore
 
-from mopipe.segments.inputs import (
+from mopipe.core.segments.inputs import (
     AnyInput,
     MultiValueInput,
     MultivariateSeriesInput,

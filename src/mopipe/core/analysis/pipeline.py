@@ -6,7 +6,7 @@ analysis steps (segments) on the data.
 
 import typing as t
 
-from mopipe.segments import Segment
+from mopipe.core.segments import Segment
 
 
 class Pipeline(t.MutableSequence[Segment]):

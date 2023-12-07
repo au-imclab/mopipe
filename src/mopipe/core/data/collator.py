@@ -8,7 +8,7 @@ from pathlib import Path
 
 from pandas import DataFrame
 
-from mopipe.data import AbstractReader
+from mopipe.core.data import AbstractReader
 
 
 class MocapDataCollator:

@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest  # type: ignore
 
-from mopipe.data.empirical import MocapMetaData, MocapTimeSeries
+from mopipe.core.data.empirical import MocapMetaData, MocapTimeSeries
 
 
 class TestMocapMetaData:

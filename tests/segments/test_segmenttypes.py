@@ -1,4 +1,4 @@
-from mopipe.segments.segmenttypes import (
+from mopipe.core.segments.segmenttypes import (
     AnalysisType,
     OtherType,
     PreprocessorType,

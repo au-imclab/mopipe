@@ -7,7 +7,7 @@ if sys.version_info >= (3, 11):
 else:
     from strenum import StrEnum
 
-from mopipe.common import datastructs as ds
+from mopipe.core.common import datastructs as ds
 
 
 def test_strenumcontainsmeta():

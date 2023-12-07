@@ -6,9 +6,9 @@ Base segment class for all pipeline steps.
 import typing as t
 from abc import ABCMeta, abstractmethod
 
-from mopipe.common.util import maybe_generate_id
-from mopipe.segments.io import IOType
-from mopipe.segments.segmenttypes import SegmentType
+from mopipe.core.common.util import maybe_generate_id
+from mopipe.core.segments.io import IOType
+from mopipe.core.segments.segmenttypes import SegmentType
 
 
 class SegmentMeta(ABCMeta):

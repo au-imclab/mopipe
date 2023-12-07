@@ -2,10 +2,10 @@ from typing import Any
 
 import pytest  # type: ignore
 
-from mopipe.segments.inputs import AnyInput
-from mopipe.segments.outputs import AnyOutput
-from mopipe.segments.seg import Segment
-from mopipe.segments.segmenttypes import OtherType
+from mopipe.core.segments.inputs import AnyInput
+from mopipe.core.segments.outputs import AnyOutput
+from mopipe.core.segments.seg import Segment
+from mopipe.core.segments.segmenttypes import OtherType
 
 
 class AnyAnySegment(AnyInput, AnyOutput, OtherType, Segment):

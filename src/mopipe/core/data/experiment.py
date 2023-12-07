@@ -11,12 +11,12 @@ else:
 
     from strenum import StrEnum
 
-from mopipe.common import maybe_generate_id
+from mopipe.core.common import maybe_generate_id
 
 if t.TYPE_CHECKING:
-    from mopipe.data import EmpiricalData
+    from mopipe.core.data import EmpiricalData
 
-from mopipe.data import MetaData
+from mopipe.core.data import MetaData
 
 
 class LDType(StrEnum):
