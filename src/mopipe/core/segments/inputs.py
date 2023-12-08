@@ -14,7 +14,7 @@ class InputTypeBaseMixin(IOTypeBaseMixin):
         """The type of the input."""
         return self._input_type
 
-    def _ensure_input_exists(self, **kwargs) -> bool:  # noqa: ARG002
+    def _ensure_input_exists(self, **kwargs) -> bool:
         """Ensure that the input exists."""
         if "x" in kwargs:
             return True
@@ -85,6 +85,7 @@ class MultiValueInput(InputTypeBaseMixin):
             return False
         return True
 
+
 class SingleNumericValueInput(InputTypeBaseMixin):
     """Mixin class for single numeric value input segments."""
 
@@ -152,7 +153,7 @@ class OtherInput(InputTypeBaseMixin):
         msg = "Other input type must be implemented by subclass."
         raise NotImplementedError(msg)
 
-    def validate_input(self, **kwargs) -> bool:  # noqa: ARG002
+    def validate_input(self, **kwargs) -> bool:
         """Validate the input."""
         if not self._validate_other(kwargs["x"]):
             return False

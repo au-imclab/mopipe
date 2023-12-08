@@ -36,7 +36,7 @@ class AbstractReader(ABC):
         name: str,
         data_id: t.Optional[str] = None,
         sample_rate: t.Optional[float] = None,
-       **kwargs,
+        **kwargs,
     ):
         """Initialize the AbstractReader.
 
@@ -116,7 +116,7 @@ class MocapReader(AbstractReader):
         name: str,
         data_id: t.Optional[str] = None,
         sample_rate: t.Optional[float] = None,
-       **kwargs,
+        **kwargs,
     ):
         """Initialize the MocapReader.
 

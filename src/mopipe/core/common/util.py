@@ -39,6 +39,7 @@ def maybe_generate_id(
     suffix = "" if suffix is None else "_" + suffix
     return prefix + str(uuid4()) + suffix
 
+
 def int_or_str_slice(s: slice) -> t.Union[type[int], type[str]]:
     start = s.start
     stop = s.stop
@@ -48,6 +49,7 @@ def int_or_str_slice(s: slice) -> t.Union[type[int], type[str]]:
         return str
     msg = "Invalid slice."
     raise ValueError(msg)
+
 
 def df_slice(df: pd.DataFrame, s: slice) -> t.Union[pd.DataFrame, pd.Series]:
     slice_type = int_or_str_slice(s)
