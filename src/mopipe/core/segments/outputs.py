@@ -1,7 +1,7 @@
 import typing as t
 from abc import abstractmethod
 
-from mopipe.segments.io import IOType, IOTypeBaseMixin
+from mopipe.core.segments.io import IOType, IOTypeBaseMixin
 
 
 class OutputTypeBaseMixin(IOTypeBaseMixin):
@@ -68,6 +68,42 @@ class MultiValueOutput(OutputTypeBaseMixin):
     def validate_output(self, output: t.Any) -> bool:
         """Validate the output."""
         if not self._validate_multiple_values(output):
+            return False
+        return True
+
+
+class SingleNumericValueOutput(OutputTypeBaseMixin):
+    """Mixin class for single numeric value output segments."""
+
+    _output_type = IOType.SINGLE_NUMERIC_VALUE
+
+    def validate_output(self, output: t.Any) -> bool:
+        """Validate the output."""
+        if not self._validate_single_numeric_value(output):
+            return False
+        return True
+
+
+class AnySeriesOutput(OutputTypeBaseMixin):
+    """Mixin class for any series output segments."""
+
+    _output_type = IOType.ANY_SERIES
+
+    def validate_output(self, output: t.Any) -> bool:
+        """Validate the output."""
+        if not self._validate_any_series(output):
+            return False
+        return True
+
+
+class AnyNumericOutput(OutputTypeBaseMixin):
+    """Mixin class for any numeric output segments."""
+
+    _output_type = IOType.ANY_NUMERIC
+
+    def validate_output(self, output: t.Any) -> bool:
+        """Validate the output."""
+        if not self._validate_any_numeric(output):
             return False
         return True
 

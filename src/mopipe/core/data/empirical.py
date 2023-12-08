@@ -4,10 +4,10 @@ import typing as t
 
 from pandas import DataFrame, Series
 
-from mopipe.common import MocapMetadataEntries, maybe_generate_id
+from mopipe.core.common import MocapMetadataEntries, maybe_generate_id
 
 if t.TYPE_CHECKING:
-    from mopipe.data import ExperimentLevel
+    from mopipe.core.data import ExperimentLevel
 
 
 class MetaData(dict):
@@ -16,8 +16,8 @@ class MetaData(dict):
     Base class for all metadata associated with data.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class MocapMetaData(MetaData):
@@ -27,11 +27,11 @@ class MocapMetaData(MetaData):
     known names in MocapMetadataEntries.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         for key, value in kwargs.items():
             if key in MocapMetadataEntries:
                 kwargs[MocapMetadataEntries[key]] = value
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
 
     def __setitem__(self, key: str, value: t.Any):
         if key in MocapMetadataEntries:

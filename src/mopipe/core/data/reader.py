@@ -11,9 +11,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import MocapMetadataEntries, maybe_generate_id
-from mopipe.common.qtm import parse_metadata_row
-from mopipe.data import EmpiricalData, MetaData, MocapMetaData, MocapTimeSeries
+from mopipe.core.common import MocapMetadataEntries, maybe_generate_id
+from mopipe.core.common.qtm import parse_metadata_row
+from mopipe.core.data import EmpiricalData, MetaData, MocapMetaData, MocapTimeSeries
 
 
 class AbstractReader(ABC):

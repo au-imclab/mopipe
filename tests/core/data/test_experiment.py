@@ -1,6 +1,6 @@
 import pytest  # type: ignore
 
-from mopipe.data import Experiment, ExperimentLevel, Trial
+from mopipe.core.data import Experiment, ExperimentLevel, Trial
 
 
 def test_levels():

@@ -6,6 +6,8 @@ Common utility functions.
 import typing as t
 from uuid import uuid4
 
+import pandas as pd
+
 
 def maybe_generate_id(
     _id: t.Optional[str] = None, prefix: t.Optional[str] = None, suffix: t.Optional[str] = None
@@ -36,3 +38,24 @@ def maybe_generate_id(
     prefix = "" if prefix is None else prefix + "_"
     suffix = "" if suffix is None else "_" + suffix
     return prefix + str(uuid4()) + suffix
+
+
+def int_or_str_slice(s: slice) -> t.Union[type[int], type[str]]:
+    start = s.start
+    stop = s.stop
+    if isinstance(start, int) and isinstance(stop, int):
+        return int
+    if isinstance(start, str) and isinstance(stop, str):
+        return str
+    msg = "Invalid slice."
+    raise ValueError(msg)
+
+
+def df_slice(df: pd.DataFrame, s: slice) -> t.Union[pd.DataFrame, pd.Series]:
+    slice_type = int_or_str_slice(s)
+    if slice_type == int:
+        return df.iloc[s]
+    if slice_type == str:
+        return df.loc[s]
+    msg = "Invalid slice."
+    raise ValueError(msg)

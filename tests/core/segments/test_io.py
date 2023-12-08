@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest  # type: ignore
 
-from mopipe.segments.io import IOTypeBaseMixin
+from mopipe.core.segments.io import IOTypeBaseMixin
 
 
 class TestIOTypeBaseMixin:

@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from mopipe.common import MocapMetadataEntries
-from mopipe.data import MocapMetaData, MocapReader, MocapTimeSeries
+from mopipe.core.common import MocapMetadataEntries
+from mopipe.core.data import MocapMetaData, MocapReader, MocapTimeSeries
 
 
 def test_metadata():

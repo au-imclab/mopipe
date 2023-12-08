@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 import pytest  # type: ignore
 
-from mopipe.segments.inputs import (
+from mopipe.core.segments.inputs import (
     AnyInput,
     MultiValueInput,
     MultivariateSeriesInput,
@@ -20,13 +20,13 @@ class TestUnivariateSeriesInput:
 
     def test_validate_input_with_valid_input(self, univariate_series_input: UnivariateSeriesInput):
         series = pd.Series([1, 2, 3])
-        assert univariate_series_input.validate_input(input=series) is True
+        assert univariate_series_input.validate_input(x=series) is True
         dataframe = pd.DataFrame({"A": [1, 2, 3]})
-        assert univariate_series_input.validate_input(input=dataframe) is True
+        assert univariate_series_input.validate_input(x=dataframe) is True
 
     def test_validate_input_with_invalid_input(self, univariate_series_input: UnivariateSeriesInput):
         dataframe = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
-        assert univariate_series_input.validate_input(input=dataframe) is False
+        assert univariate_series_input.validate_input(x=dataframe) is False
 
 
 class TestMultivariateSeriesInput:
@@ -36,11 +36,11 @@ class TestMultivariateSeriesInput:
 
     def test_validate_input_with_valid_input(self, multivariate_series_input: MultivariateSeriesInput):
         dataframe = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
-        assert multivariate_series_input.validate_input(input=dataframe) is True
+        assert multivariate_series_input.validate_input(x=dataframe) is True
 
     def test_validate_input_with_invalid_input(self, multivariate_series_input: MultivariateSeriesInput):
         series = pd.Series([1, 2, 3])
-        assert multivariate_series_input.validate_input(input=series) is False
+        assert multivariate_series_input.validate_input(x=series) is False
 
 
 class TestSingleValueInput:
@@ -50,11 +50,11 @@ class TestSingleValueInput:
 
     def test_validate_input_with_valid_input(self, single_value_input: SingleValueInput):
         value = 10
-        assert single_value_input.validate_input(input=value) is True
+        assert single_value_input.validate_input(x=value) is True
 
     def test_validate_input_with_invalid_input(self, single_value_input: SingleValueInput):
         series = pd.Series([1, 2, 3])
-        assert single_value_input.validate_input(input=series) is False
+        assert single_value_input.validate_input(x=series) is False
 
 
 class TestMultiValueInput:
@@ -64,11 +64,11 @@ class TestMultiValueInput:
 
     def test_validate_input_with_valid_input(self, multi_value_input: MultiValueInput):
         values = [1, 2, 3]
-        assert multi_value_input.validate_input(input=values) is True
+        assert multi_value_input.validate_input(x=values) is True
 
     def test_validate_input_with_invalid_input(self, multi_value_input: MultiValueInput):
         value = 10
-        assert multi_value_input.validate_input(input=value) is False
+        assert multi_value_input.validate_input(x=value) is False
 
 
 class TestAnyInput:
@@ -79,7 +79,7 @@ class TestAnyInput:
     def test_validate_input_with_valid_input(self, any_input: AnyInput):
         values = [1, "test", None, [1, 2, 3]]
         for value in values:
-            assert any_input.validate_input(input=value) is True
+            assert any_input.validate_input(x=value) is True
 
 
 class TestOtherInput:
@@ -89,7 +89,7 @@ class TestOtherInput:
 
     def test_validate_input_with_valid_input(self, other_input: OtherInput):
         with pytest.raises(NotImplementedError):
-            other_input.validate_input(input=10)
+            other_input.validate_input(x=10)
 
 
 class TestOtherInputImplementation:
@@ -102,4 +102,4 @@ class TestOtherInputImplementation:
         return OtherInputImplementation()  # type: ignore
 
     def test_validate_input_with_valid_input(self, other_input: OtherInput):
-        assert other_input.validate_input(input=10) is True
+        assert other_input.validate_input(x=10) is True
