@@ -18,7 +18,7 @@
     
     
       
-        <title>API Documentation - mopipe documentation</title>
+        <title>Mopipe API - mopipe documentation</title>
       
     
     
@@ -96,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API Documentation
+              Mopipe API
             
           </span>
         </div>
@@ -189,7 +189,7 @@
           
   
   <span class="md-ellipsis">
-    API Documentation
+    Mopipe API
   </span>
   
 
@@ -200,7 +200,7 @@
         
   
   <span class="md-ellipsis">
-    API Documentation
+    Mopipe API
   </span>
   
 
@@ -300,7 +300,7 @@
         
   
   <span class="md-ellipsis">
-    Mopipe
+    Mopipe Documentation Home
   </span>
   
 
@@ -1213,26 +1213,13 @@ input, or if the output of a segment can be used as input to another.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the output.</p>
-<p><a id="mopipe.core.segments.outputs.NumericOutput"></a></p>
-<h2 id="numericoutput-objects">NumericOutput Objects</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NumericOutput</span><span class="p">(</span><span class="n">OutputTypeBaseMixin</span><span class="p">)</span>
-</code></pre></div>
-<p>Mixin class for numeric output segments,</p>
-<p>Segments inheriting from this class must return a numeric output:
-- A single int or float value
-- A pandas Series or DataFrame with int or float values</p>
-<p><a id="mopipe.core.segments.outputs.NumericOutput.validate_output"></a></p>
-<h4 id="validate_output_9">validate_output</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
-</code></pre></div>
-<p>Validate the input.</p>
 <p><a id="mopipe.core.segments.outputs.OtherOutput"></a></p>
 <h2 id="otheroutput-objects">OtherOutput Objects</h2>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OtherOutput</span><span class="p">(</span><span class="n">OutputTypeBaseMixin</span><span class="p">)</span>
 </code></pre></div>
 <p>Mixin class for other output segments.</p>
 <p><a id="mopipe.core.segments.outputs.OtherOutput.validate_output"></a></p>
-<h4 id="validate_output_10">validate_output</h4>
+<h4 id="validate_output_9">validate_output</h4>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the output.</p>
@@ -1271,7 +1258,7 @@ input, or if the output of a segment can be used as input to another.</p>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.seg.Segment.validate_output"></a></p>
-<h4 id="validate_output_11">validate_output</h4>
+<h4 id="validate_output_10">validate_output</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>

@@ -1482,30 +1482,6 @@ def validate_output(output: t.Any) -> bool
 
 Validate the output.
 
-<a id="mopipe.core.segments.outputs.NumericOutput"></a>
-
-## NumericOutput Objects
-
-```python
-class NumericOutput(OutputTypeBaseMixin)
-```
-
-Mixin class for numeric output segments,
-
-Segments inheriting from this class must return a numeric output:
-- A single int or float value
-- A pandas Series or DataFrame with int or float values
-
-<a id="mopipe.core.segments.outputs.NumericOutput.validate_output"></a>
-
-#### validate\_output
-
-```python
-def validate_output(output: t.Any) -> bool
-```
-
-Validate the input.
-
 <a id="mopipe.core.segments.outputs.OtherOutput"></a>
 
 ## OtherOutput Objects
