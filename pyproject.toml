@@ -113,7 +113,7 @@ dependencies = [
 
 [tool.hatch.envs.docs.scripts]
 gen-docs = "pydoc-markdown {args}"
-prep-docs = "novella -d docs {args}"
+prep-docs = "novella -d _docs {args}"
 
 [[tool.pydoc-markdown.loaders]]
 type = "python"
@@ -121,7 +121,7 @@ search_path = [ "src" ]
 
 [tool.pydoc-markdown.renderer]
 type = "mkdocs"
-output_directory = "docs"
+output_directory = "_docs"
 content_directory_name = "content"
 site_name = "mopipe documentation"
 # plugins = ["autorefs"]

@@ -1,5 +1,0 @@
-docs_dir: content
-nav:
-- API Documentation: api.md
-- Mopipe: index.md
-site_name: mopipe documentation
