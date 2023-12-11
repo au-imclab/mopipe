@@ -112,6 +112,7 @@ dependencies = [
 ]
 
 [tool.hatch.envs.docs.scripts]
+build-md = "pydoc-markdown {args}"
 build = "mkdocs build -f mkdocs.yml {args}"
 serve = "mkdocs serve -f mkdocs.yml {args}"
 gh-deploy = "mkdocs gh-deploy -f mkdocs.yml {args}"
