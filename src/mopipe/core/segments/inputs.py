@@ -141,21 +141,6 @@ class AnyInput(InputTypeBaseMixin):
             return False
         return True
 
-
-class NumericInput(InputTypeBaseMixin):
-    """Mixin class for numeric input segments, this will accept single values series and dataframes."""
-
-    _input_type = IOType.NUMERIC
-
-    def validate_input(self, *args, **kwargs) -> bool:
-        """Validate the input."""
-        if not self._ensure_input_exists(*args, **kwargs):
-            return False
-        if not self._validate_numeric(kwargs["input"]):
-            return False
-        return True
-
-
 class OtherInput(InputTypeBaseMixin):
     """Mixin class for other input segments."""
 
