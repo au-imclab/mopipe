@@ -113,7 +113,7 @@ dependencies = [
 
 [tool.hatch.envs.docs.scripts]
 gen-docs = "pydoc-markdown {args}"
-prep-docs = "novella -d _docs {args}"
+html-docs = "novella -d _docs --site-dir ../docs {args}"
 
 [[tool.pydoc-markdown.loaders]]
 type = "python"
