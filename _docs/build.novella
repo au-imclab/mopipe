@@ -1,10 +1,10 @@
 template "mkdocs"
-
+option "site_directory" "../docs"
 action "mkdocs-update-config" {
   apply_defaults=True
   profile='material'
   update '$.plugins' add: ['autorefs']
-  update '$.site_dir' set: '../docs'
+  # update '$.site_dir' set: '../docs'
   update '$.not_in_nav' set: '.nojekyll'
   update '$.markdown_extensions' add: ['callouts', 'pymdownx.superfences']
 }

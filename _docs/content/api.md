@@ -65,7 +65,7 @@ Add a segment to the pipeline.
 #### run
 
 ```python
-def run(*args, **kwargs) -> t.Any
+def run(**kwargs) -> t.Any
 ```
 
 Run the pipeline.
@@ -1074,7 +1074,7 @@ The type of the input.
 
 ```python
 @abstractmethod
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1094,7 +1094,7 @@ Mixin class for univariate series input segments.
 #### validate\_input
 
 ```python
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1114,7 +1114,7 @@ Mixin class for multivariate series input segments.
 #### validate\_input
 
 ```python
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1134,7 +1134,7 @@ Mixin class for single value input segments.
 #### validate\_input
 
 ```python
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1154,7 +1154,67 @@ Mixin class for multiple values input segments.
 #### validate\_input
 
 ```python
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
+```
+
+Validate the input.
+
+<a id="mopipe.core.segments.inputs.SingleNumericValueInput"></a>
+
+## SingleNumericValueInput Objects
+
+```python
+class SingleNumericValueInput(InputTypeBaseMixin)
+```
+
+Mixin class for single numeric value input segments.
+
+<a id="mopipe.core.segments.inputs.SingleNumericValueInput.validate_input"></a>
+
+#### validate\_input
+
+```python
+def validate_input(**kwargs) -> bool
+```
+
+Validate the input.
+
+<a id="mopipe.core.segments.inputs.AnySeriesInput"></a>
+
+## AnySeriesInput Objects
+
+```python
+class AnySeriesInput(InputTypeBaseMixin)
+```
+
+Mixin class for any series input segments.
+
+<a id="mopipe.core.segments.inputs.AnySeriesInput.validate_input"></a>
+
+#### validate\_input
+
+```python
+def validate_input(**kwargs) -> bool
+```
+
+Validate the input.
+
+<a id="mopipe.core.segments.inputs.AnyNumericInput"></a>
+
+## AnyNumericInput Objects
+
+```python
+class AnyNumericInput(InputTypeBaseMixin)
+```
+
+Mixin class for any numeric input segments.
+
+<a id="mopipe.core.segments.inputs.AnyNumericInput.validate_input"></a>
+
+#### validate\_input
+
+```python
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1174,27 +1234,7 @@ Mixin class for any input segments.
 #### validate\_input
 
 ```python
-def validate_input(*args, **kwargs) -> bool
-```
-
-Validate the input.
-
-<a id="mopipe.core.segments.inputs.NumericInput"></a>
-
-## NumericInput Objects
-
-```python
-class NumericInput(InputTypeBaseMixin)
-```
-
-Mixin class for numeric input segments, this will accept single values series and dataframes.
-
-<a id="mopipe.core.segments.inputs.NumericInput.validate_input"></a>
-
-#### validate\_input
-
-```python
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1214,7 +1254,7 @@ Mixin class for other input segments.
 #### validate\_input
 
 ```python
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1362,6 +1402,66 @@ def validate_output(output: t.Any) -> bool
 
 Validate the output.
 
+<a id="mopipe.core.segments.outputs.SingleNumericValueOutput"></a>
+
+## SingleNumericValueOutput Objects
+
+```python
+class SingleNumericValueOutput(OutputTypeBaseMixin)
+```
+
+Mixin class for single numeric value output segments.
+
+<a id="mopipe.core.segments.outputs.SingleNumericValueOutput.validate_output"></a>
+
+#### validate\_output
+
+```python
+def validate_output(output: t.Any) -> bool
+```
+
+Validate the output.
+
+<a id="mopipe.core.segments.outputs.AnySeriesOutput"></a>
+
+## AnySeriesOutput Objects
+
+```python
+class AnySeriesOutput(OutputTypeBaseMixin)
+```
+
+Mixin class for any series output segments.
+
+<a id="mopipe.core.segments.outputs.AnySeriesOutput.validate_output"></a>
+
+#### validate\_output
+
+```python
+def validate_output(output: t.Any) -> bool
+```
+
+Validate the output.
+
+<a id="mopipe.core.segments.outputs.AnyNumericOutput"></a>
+
+## AnyNumericOutput Objects
+
+```python
+class AnyNumericOutput(OutputTypeBaseMixin)
+```
+
+Mixin class for any numeric output segments.
+
+<a id="mopipe.core.segments.outputs.AnyNumericOutput.validate_output"></a>
+
+#### validate\_output
+
+```python
+def validate_output(output: t.Any) -> bool
+```
+
+Validate the output.
+
 <a id="mopipe.core.segments.outputs.AnyOutput"></a>
 
 ## AnyOutput Objects
@@ -1486,7 +1586,7 @@ The id of the segment.
 
 ```python
 @abstractmethod
-def validate_input(*args, **kwargs) -> bool
+def validate_input(**kwargs) -> bool
 ```
 
 Validate the input.
@@ -1508,7 +1608,7 @@ Validate the output.
 
 ```python
 @abstractmethod
-def process(*args, **kwargs) -> t.Any
+def process(x: t.Any, **kwargs) -> t.Any
 ```
 
 Process the inputs and return the output.
@@ -1554,7 +1654,7 @@ The type of the segment.
 #### \_\_call\_\_
 
 ```python
-def __call__(*args, **kwargs) -> t.Any
+def __call__(**kwargs) -> t.Any
 ```
 
 Process the inputs and return the output.
@@ -1672,43 +1772,9 @@ Mixin class for other segments.
 
 # mopipe.core
 
-<a id="mopipe.segments"></a>
+<a id="mopipe.segment"></a>
 
-# mopipe.segments
-
-<a id="mopipe.segments.Mean"></a>
-
-## Mean Objects
-
-```python
-class Mean(segmenttypes.SummaryType, outputs.SingleValueOutput)
-```
-
-Mean
-
-Calculate the mean of the input.
-
-<a id="mopipe.segments.SeriesMean"></a>
-
-## SeriesMean Objects
-
-```python
-class SeriesMean(inputs.UnivariateSeriesInput, Mean, Segment)
-```
-
-SeriesMean
-
-Calculate the mean of a univariate series input.
-
-<a id="mopipe.segments.SeriesMean.process"></a>
-
-#### process
-
-```python
-def process(*args, **kwargs) -> pd.Series
-```
-
-Process the inputs and return the output.
+# mopipe.segment
 
 <a id="mopipe.__about__"></a>
 

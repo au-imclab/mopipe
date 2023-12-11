@@ -447,7 +447,7 @@ analysis steps (segments) on the data.</p>
 <p>Add a segment to the pipeline.</p>
 <p><a id="mopipe.core.analysis.pipeline.Pipeline.run"></a></p>
 <h4 id="run">run</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span>
 </code></pre></div>
 <p>Run the pipeline.</p>
 <p><a id="mopipe.core.analysis"></a></p>
@@ -1007,7 +1007,7 @@ level : DataLevel, optional
 <p><a id="mopipe.core.segments.inputs.InputTypeBaseMixin.validate_input"></a></p>
 <h4 id="validate_input">validate_input</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.inputs.UnivariateSeriesInput"></a></p>
@@ -1017,7 +1017,7 @@ level : DataLevel, optional
 <p>Mixin class for univariate series input segments.</p>
 <p><a id="mopipe.core.segments.inputs.UnivariateSeriesInput.validate_input"></a></p>
 <h4 id="validate_input_1">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.inputs.MultivariateSeriesInput"></a></p>
@@ -1027,7 +1027,7 @@ level : DataLevel, optional
 <p>Mixin class for multivariate series input segments.</p>
 <p><a id="mopipe.core.segments.inputs.MultivariateSeriesInput.validate_input"></a></p>
 <h4 id="validate_input_2">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.inputs.SingleValueInput"></a></p>
@@ -1037,7 +1037,7 @@ level : DataLevel, optional
 <p>Mixin class for single value input segments.</p>
 <p><a id="mopipe.core.segments.inputs.SingleValueInput.validate_input"></a></p>
 <h4 id="validate_input_3">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.inputs.MultiValueInput"></a></p>
@@ -1047,7 +1047,37 @@ level : DataLevel, optional
 <p>Mixin class for multiple values input segments.</p>
 <p><a id="mopipe.core.segments.inputs.MultiValueInput.validate_input"></a></p>
 <h4 id="validate_input_4">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>Validate the input.</p>
+<p><a id="mopipe.core.segments.inputs.SingleNumericValueInput"></a></p>
+<h2 id="singlenumericvalueinput-objects">SingleNumericValueInput Objects</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SingleNumericValueInput</span><span class="p">(</span><span class="n">InputTypeBaseMixin</span><span class="p">)</span>
+</code></pre></div>
+<p>Mixin class for single numeric value input segments.</p>
+<p><a id="mopipe.core.segments.inputs.SingleNumericValueInput.validate_input"></a></p>
+<h4 id="validate_input_5">validate_input</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>Validate the input.</p>
+<p><a id="mopipe.core.segments.inputs.AnySeriesInput"></a></p>
+<h2 id="anyseriesinput-objects">AnySeriesInput Objects</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnySeriesInput</span><span class="p">(</span><span class="n">InputTypeBaseMixin</span><span class="p">)</span>
+</code></pre></div>
+<p>Mixin class for any series input segments.</p>
+<p><a id="mopipe.core.segments.inputs.AnySeriesInput.validate_input"></a></p>
+<h4 id="validate_input_6">validate_input</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>Validate the input.</p>
+<p><a id="mopipe.core.segments.inputs.AnyNumericInput"></a></p>
+<h2 id="anynumericinput-objects">AnyNumericInput Objects</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnyNumericInput</span><span class="p">(</span><span class="n">InputTypeBaseMixin</span><span class="p">)</span>
+</code></pre></div>
+<p>Mixin class for any numeric input segments.</p>
+<p><a id="mopipe.core.segments.inputs.AnyNumericInput.validate_input"></a></p>
+<h4 id="validate_input_7">validate_input</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.inputs.AnyInput"></a></p>
@@ -1056,18 +1086,8 @@ level : DataLevel, optional
 </code></pre></div>
 <p>Mixin class for any input segments.</p>
 <p><a id="mopipe.core.segments.inputs.AnyInput.validate_input"></a></p>
-<h4 id="validate_input_5">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
-</code></pre></div>
-<p>Validate the input.</p>
-<p><a id="mopipe.core.segments.inputs.NumericInput"></a></p>
-<h2 id="numericinput-objects">NumericInput Objects</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NumericInput</span><span class="p">(</span><span class="n">InputTypeBaseMixin</span><span class="p">)</span>
-</code></pre></div>
-<p>Mixin class for numeric input segments, this will accept single values series and dataframes.</p>
-<p><a id="mopipe.core.segments.inputs.NumericInput.validate_input"></a></p>
-<h4 id="validate_input_6">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<h4 id="validate_input_8">validate_input</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.inputs.OtherInput"></a></p>
@@ -1076,8 +1096,8 @@ level : DataLevel, optional
 </code></pre></div>
 <p>Mixin class for other input segments.</p>
 <p><a id="mopipe.core.segments.inputs.OtherInput.validate_input"></a></p>
-<h4 id="validate_input_7">validate_input</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<h4 id="validate_input_9">validate_input</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.io"></a></p>
@@ -1153,13 +1173,43 @@ input, or if the output of a segment can be used as input to another.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the output.</p>
+<p><a id="mopipe.core.segments.outputs.SingleNumericValueOutput"></a></p>
+<h2 id="singlenumericvalueoutput-objects">SingleNumericValueOutput Objects</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SingleNumericValueOutput</span><span class="p">(</span><span class="n">OutputTypeBaseMixin</span><span class="p">)</span>
+</code></pre></div>
+<p>Mixin class for single numeric value output segments.</p>
+<p><a id="mopipe.core.segments.outputs.SingleNumericValueOutput.validate_output"></a></p>
+<h4 id="validate_output_5">validate_output</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>Validate the output.</p>
+<p><a id="mopipe.core.segments.outputs.AnySeriesOutput"></a></p>
+<h2 id="anyseriesoutput-objects">AnySeriesOutput Objects</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnySeriesOutput</span><span class="p">(</span><span class="n">OutputTypeBaseMixin</span><span class="p">)</span>
+</code></pre></div>
+<p>Mixin class for any series output segments.</p>
+<p><a id="mopipe.core.segments.outputs.AnySeriesOutput.validate_output"></a></p>
+<h4 id="validate_output_6">validate_output</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>Validate the output.</p>
+<p><a id="mopipe.core.segments.outputs.AnyNumericOutput"></a></p>
+<h2 id="anynumericoutput-objects">AnyNumericOutput Objects</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnyNumericOutput</span><span class="p">(</span><span class="n">OutputTypeBaseMixin</span><span class="p">)</span>
+</code></pre></div>
+<p>Mixin class for any numeric output segments.</p>
+<p><a id="mopipe.core.segments.outputs.AnyNumericOutput.validate_output"></a></p>
+<h4 id="validate_output_7">validate_output</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p>Validate the output.</p>
 <p><a id="mopipe.core.segments.outputs.AnyOutput"></a></p>
 <h2 id="anyoutput-objects">AnyOutput Objects</h2>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnyOutput</span><span class="p">(</span><span class="n">OutputTypeBaseMixin</span><span class="p">)</span>
 </code></pre></div>
 <p>Mixin class for any output segments.</p>
 <p><a id="mopipe.core.segments.outputs.AnyOutput.validate_output"></a></p>
-<h4 id="validate_output_5">validate_output</h4>
+<h4 id="validate_output_8">validate_output</h4>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the output.</p>
@@ -1172,7 +1222,7 @@ input, or if the output of a segment can be used as input to another.</p>
 - A single int or float value
 - A pandas Series or DataFrame with int or float values</p>
 <p><a id="mopipe.core.segments.outputs.NumericOutput.validate_output"></a></p>
-<h4 id="validate_output_6">validate_output</h4>
+<h4 id="validate_output_9">validate_output</h4>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
@@ -1182,7 +1232,7 @@ input, or if the output of a segment can be used as input to another.</p>
 </code></pre></div>
 <p>Mixin class for other output segments.</p>
 <p><a id="mopipe.core.segments.outputs.OtherOutput.validate_output"></a></p>
-<h4 id="validate_output_7">validate_output</h4>
+<h4 id="validate_output_10">validate_output</h4>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the output.</p>
@@ -1215,13 +1265,13 @@ input, or if the output of a segment can be used as input to another.</p>
 </code></pre></div>
 <p>The id of the segment.</p>
 <p><a id="mopipe.core.segments.seg.Segment.validate_input"></a></p>
-<h4 id="validate_input_8">validate_input</h4>
+<h4 id="validate_input_10">validate_input</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="k">def</span> <span class="nf">validate_input</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 <p>Validate the input.</p>
 <p><a id="mopipe.core.segments.seg.Segment.validate_output"></a></p>
-<h4 id="validate_output_8">validate_output</h4>
+<h4 id="validate_output_11">validate_output</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
@@ -1229,7 +1279,7 @@ input, or if the output of a segment can be used as input to another.</p>
 <p><a id="mopipe.core.segments.seg.Segment.process"></a></p>
 <h4 id="process">process</h4>
 <div class="highlight"><pre><span></span><code><span class="nd">@abstractmethod</span>
-<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span>
+<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span>
 </code></pre></div>
 <p>Process the inputs and return the output.</p>
 <p><a id="mopipe.core.segments.seg.Segment.input_type"></a></p>
@@ -1255,7 +1305,7 @@ input, or if the output of a segment can be used as input to another.</p>
 <p>The type of the segment.</p>
 <p><a id="mopipe.core.segments.seg.Segment.__call__"></a></p>
 <h4 id="__call__">__call__</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">Any</span>
 </code></pre></div>
 <p>Process the inputs and return the output.</p>
 <p><a id="mopipe.core.segments.segmenttypes"></a></p>
@@ -1315,25 +1365,8 @@ input, or if the output of a segment can be used as input to another.</p>
 <h1 id="mopipecoresegments">mopipe.core.segments</h1>
 <p><a id="mopipe.core"></a></p>
 <h1 id="mopipecore">mopipe.core</h1>
-<p><a id="mopipe.segments"></a></p>
-<h1 id="mopipesegments">mopipe.segments</h1>
-<p><a id="mopipe.segments.Mean"></a></p>
-<h2 id="mean-objects">Mean Objects</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Mean</span><span class="p">(</span><span class="n">segmenttypes</span><span class="o">.</span><span class="n">SummaryType</span><span class="p">,</span> <span class="n">outputs</span><span class="o">.</span><span class="n">SingleValueOutput</span><span class="p">)</span>
-</code></pre></div>
-<p>Mean</p>
-<p>Calculate the mean of the input.</p>
-<p><a id="mopipe.segments.SeriesMean"></a></p>
-<h2 id="seriesmean-objects">SeriesMean Objects</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SeriesMean</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">UnivariateSeriesInput</span><span class="p">,</span> <span class="n">Mean</span><span class="p">,</span> <span class="n">Segment</span><span class="p">)</span>
-</code></pre></div>
-<p>SeriesMean</p>
-<p>Calculate the mean of a univariate series input.</p>
-<p><a id="mopipe.segments.SeriesMean.process"></a></p>
-<h4 id="process_1">process</h4>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
-</code></pre></div>
-<p>Process the inputs and return the output.</p>
+<p><a id="mopipe.segment"></a></p>
+<h1 id="mopipesegment">mopipe.segment</h1>
 <p><a id="mopipe.__about__"></a></p>
 <h1 id="mopipe__about__">mopipe.__about__</h1>
 
