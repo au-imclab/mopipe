@@ -141,6 +141,7 @@ class AnyInput(InputTypeBaseMixin):
             return False
         return True
 
+
 class OtherInput(InputTypeBaseMixin):
     """Mixin class for other input segments."""
 
