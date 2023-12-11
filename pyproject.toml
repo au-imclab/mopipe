@@ -124,12 +124,14 @@ search_path = [ "src" ]
 [tool.pydoc-markdown.renderer]
 type = "mkdocs"
 output_directory = "."
-content_directory_name = "docs"
-
-[[tool.pydoc-markdown.renderer.pages]]
-title = "API Documentation"
-name = "index"
-contents = [ "mopipe.*" ]
+content_directory_name = "docs/content"
+site_name = "mopipe documentation"
+# plugins = ["autorefs"]
+# markdown_extensions = ["callouts", "pymdownx.superfences"]
+pages = [
+  { title = "API Documentation", name = "api", contents = [ "mopipe.*" ] },
+  { title = "Mopipe", name = "index", source = "README.md" },
+]
 
 [tool.black]
 target-version = ["py39"]

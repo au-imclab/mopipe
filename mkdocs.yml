@@ -1,8 +1,0 @@
-site_name: Mopipe Documentation
-
-plugins:
-  - autorefs
-
-markdown_extensions:
-  - callouts
-  - pymdownx.superfences

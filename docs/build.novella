@@ -1,5 +1,8 @@
-template "mkdocs" {
-  content_directory = "content"
+template "mkdocs"
+
+action "mkdocs-update-config" {
+  update '$.plugins' add: ['autorefs']
+  update '$.markdown_extensions' add: ['callouts', 'pymdownx.superfences']
 }
 
 action "preprocess-markdown" {
