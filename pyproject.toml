@@ -127,8 +127,8 @@ site_name = "mopipe documentation"
 # plugins = ["autorefs"]
 # markdown_extensions = ["callouts", "pymdownx.superfences"]
 pages = [
-  { title = "API Documentation", name = "api", contents = [ "mopipe.*" ] },
-  { title = "Mopipe", name = "index", source = "README.md" },
+  { title = "Mopipe API", name = "api", contents = [ "mopipe.*" ] },
+  { title = "Mopipe Documentation Home", name = "index", source = "README.md" },
 ]
 
 [tool.black]
