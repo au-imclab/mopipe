@@ -7,3 +7,5 @@ __pycache__/
 .coverage
 .ruff_cache/
 dist/
+.generated-files.txt
+mkdocs.yml

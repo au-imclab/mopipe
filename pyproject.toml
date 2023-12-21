@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-mkdocs"]
 build-backend = "hatchling.build"
 
 [project]
@@ -96,6 +96,39 @@ fmt = [
 all = [
   "style",
   "typing",
+]
+
+[tool.hatch.envs.docs]
+detached = true
+dependencies = [
+    "markdown-callouts",
+    "mkdocs",
+    "mkdocs-autorefs",
+    "mkdocs-material",
+    "pymdown-extensions",
+    "novella",
+    "pydoc-markdown[novella]",
+
+]
+
+[tool.hatch.envs.docs.scripts]
+gen-docs = "pydoc-markdown {args}"
+html-docs = "novella -d _docs --site-dir ../docs {args}"
+
+[[tool.pydoc-markdown.loaders]]
+type = "python"
+search_path = [ "src" ]
+
+[tool.pydoc-markdown.renderer]
+type = "mkdocs"
+output_directory = "_docs"
+content_directory_name = "content"
+site_name = "mopipe documentation"
+# plugins = ["autorefs"]
+# markdown_extensions = ["callouts", "pymdownx.superfences"]
+pages = [
+  { title = "Mopipe API", name = "api", contents = [ "mopipe.*" ] },
+  { title = "Mopipe Documentation Home", name = "index", source = "README.md" },
 ]
 
 [tool.black]
