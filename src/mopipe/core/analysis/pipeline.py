@@ -56,12 +56,10 @@ class Pipeline(t.MutableSequence[Segment]):
         return f"Pipeline(segments={self._segments})"
 
     @t.overload
-    def __getitem__(self, index: int) -> Segment:
-        ...
+    def __getitem__(self, index: int) -> Segment: ...
 
     @t.overload
-    def __getitem__(self, index: slice) -> t.MutableSequence[Segment]:
-        ...
+    def __getitem__(self, index: slice) -> t.MutableSequence[Segment]: ...
 
     def __getitem__(self, index: t.Union[int, slice]):
         return self._segments[index]
