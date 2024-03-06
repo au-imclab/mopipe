@@ -2,12 +2,13 @@ import typing as t
 
 import numpy as np
 import pandas as pd
+import scipy
 
 from mopipe.core.common.util import int_or_str_slice
-from mopipe.core.segments.inputs import AnySeriesInput, MultivariateSeriesInput
-from mopipe.core.segments.outputs import SingleNumericValueOutput, UnivariateSeriesOutput
+from mopipe.core.segments.inputs import AnySeriesInput, MultivariateSeriesInput, UnivariateSeriesInput
+from mopipe.core.segments.outputs import SingleNumericValueOutput, UnivariateSeriesOutput, MultivariateSeriesOutput
 from mopipe.core.segments.seg import Segment
-from mopipe.core.segments.segmenttypes import SummaryType
+from mopipe.core.segments.segmenttypes import SummaryType, AnalysisType
 
 
 class Mean(SummaryType, AnySeriesInput, SingleNumericValueOutput, Segment):
@@ -35,3 +36,25 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
             return x.select_dtypes(include="number").mean()
         msg = f"Invalid col type {type(col)} provided, Must be None, int, str, or a slice."
         raise ValueError(msg)
+
+
+class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    def process(
+            self, x: pd.Series, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG004
+    ) -> pd.Series:
+        out = pd.DataFrame(columns=["recurrence_rate"])
+        if x.empty:
+            return out
+
+        x = x.values
+        embed_data = []
+        for i in range(dim):
+            embed_data.append(x[i*tau:x.shape[0]-(dim-i-1)*tau])
+        embed_data = np.array(embed_data)
+
+        distance_matrix = scipy.spatial.distance_matrix(embed_data.T, embed_data.T)
+        recurrence_matrix = distance_matrix < threshold
+
+        rr = recurrence_matrix.mean()
+        out.loc[len(out)] = [rr]
+        return out
