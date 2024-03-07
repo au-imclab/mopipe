@@ -103,7 +103,7 @@ class TestCalcShift:
 
     def test_calc_shift(self, segment: Segment) -> None:
         x = pd.DataFrame({"a": [1,1,2,2,1,1,1,1], "b": [3,3,2,2,3,3,2,2]})
-        res = segment.process(x, col=0, shift=2)
+        res = segment.process(x, cols=["a"], shift=2)
         assert res.shape[1] == 3
         assert (res["a_shift"].values == [0,0,1,1,-1,-1,0,0]).mean() == 1.0
 

@@ -40,19 +40,16 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
 
 class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.DataFrame, col: t.Union[str, int] = 0, shift: int = 1, **kwargs
+            self, x: pd.DataFrame, cols: t.Union[list[str], None] = None, shift: int = 1, **kwargs
     ) -> pd.DataFrame:
-        col_data, col_name = None, None
-        if isinstance(col, int):
-            col_data = x.iloc[:, col].values
-            col_name = x.columns[col]
-        if isinstance(col, str):
-            col_data = x[col].values
-            col_name = col
-        new_col_name = col_name + "_shift"
-        new_col_data = np.concatenate((np.zeros(shift),
-                            col_data[shift:] - col_data[:-shift]))
-        x[new_col_name] = new_col_data
+        if cols is None:
+            cols = x.columns
+        for col_name in cols:
+            col_data = x[col_name].values
+            new_col_name = col_name + "_shift"
+            new_col_data = np.concatenate((np.zeros(shift),
+                                col_data[shift:] - col_data[:-shift]))
+            x[new_col_name] = new_col_data
         return x
 
 
