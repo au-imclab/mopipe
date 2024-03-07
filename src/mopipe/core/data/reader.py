@@ -147,7 +147,11 @@ class MocapReader(AbstractReader):
             The values of the metadata row.
         """
         k, v = parse_metadata_row(key, values)
-        self._metadata[k] = v
+        if k not in self._metadata:
+            self._metadata[k] = v
+        else:
+            # Metadata entry for an existing key: append values to the list
+            self._metadata[k] += v
 
     def _extract_metadata_from_file(self, path: Path) -> None:
         """Extract the metadata from a file and return it as a dict.

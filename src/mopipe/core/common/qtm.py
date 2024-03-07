@@ -66,7 +66,7 @@ def parse_time_stamp(time_stamp: list[str]) -> tuple[datetime, float]:
     return ts, unk
 
 
-def parse_event(event: list[str]) -> tuple[int, float]:
+def parse_event(event: list[str]) -> list[tuple[str, int, float]]:
     """Parse the event data from a list of strings.
 
     Parameters
@@ -76,12 +76,13 @@ def parse_event(event: list[str]) -> tuple[int, float]:
 
     Returns
     -------
-    Tuple[float, float]
-        Tuple containing the index and elapsed time.
+    Tuple[str, float, float]
+        Tuple containing the event name, index and elapsed time.
     """
-    index = int(event[0])
-    elapsed_time = float(event[1])
-    return index, elapsed_time
+    event_name = event[0]
+    index = int(event[1])
+    elapsed_time = float(event[2])
+    return [(event_name, index, elapsed_time)]
 
 
 def parse_marker_names(marker_names: list[str]) -> list[str]:

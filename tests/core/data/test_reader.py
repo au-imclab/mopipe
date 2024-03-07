@@ -36,3 +36,13 @@ def test_reader():
     # number of markers * 3 (x,y,z) + 1 (time)
     # frame number becomes the index
     assert len(timeseries.data.columns) == metadata[MocapMetadataEntries["marker_count"]] * 3 + 1
+
+
+def test_reading_events():
+    reader = MocapReader(
+        source=Path("tests/fixtures/sample_dance_with_header_and_events.tsv"),
+        name="test",
+    )
+    timeseries = reader.read()
+    metadata = reader.metadata
+    assert metadata.events is not None
