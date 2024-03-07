@@ -49,35 +49,57 @@ def calc_RQA(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: fl
     recurrence_matrix = distance_matrix < threshold
     msize = recurrence_matrix.shape[0]
 
-    line_dist = np.zeros(msize+1)
+    d_line_dist = np.zeros(msize+1)
     for i in range(-msize+1, msize):
-        d = np.diagonal(recurrence_matrix, i)
         cline = 0
-        for e in d:
+        for e in np.diagonal(recurrence_matrix, i):
             if e:
                 cline += 1
             else:
-                line_dist[cline] += 1
+                d_line_dist[cline] += 1
                 cline = 0
-        line_dist[cline] += 1
+        d_line_dist[cline] += 1
 
-    rr = recurrence_matrix.mean()
-    det = (line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / recurrence_matrix.sum()
+    v_line_dist = np.zeros(msize+1)
+    for i in range(msize):
+        cline = 0
+        for e in recurrence_matrix[:,i]:
+            if e:
+                cline += 1
+            else:
+                v_line_dist[cline] += 1
+                cline = 0
+        v_line_dist[cline] += 1
 
-    return rr, det
+    rr_sum = recurrence_matrix.sum()
+    rr = rr_sum / msize**2
+    det = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum
+    lam = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum
+
+    d_sum = d_line_dist[lmin:].sum()
+    avg_diag_length = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / d_sum if d_sum > 0 else 0
+    v_sum = d_line_dist[lmin:].sum()
+    avg_vert_length = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / v_sum if v_sum > 0 else 0
+
+    m = d_line_dist[lmin:] > 0
+    d_entropy = -(d_line_dist[lmin:][m] * np.log(d_line_dist[lmin:][m])).sum()
+    m = v_line_dist[lmin:] > 0
+    v_entropy = -(v_line_dist[lmin:][m] * np.log(v_line_dist[lmin:][m])).sum()
+
+    return rr, det, lam, avg_diag_length, avg_vert_length, d_entropy, v_entropy
 
 
 class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
             self, x: pd.Series, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG005
     ) -> pd.DataFrame:
-        out = pd.DataFrame(columns=["recurrence_rate", "determinism"])
+        out = pd.DataFrame(columns=["recurrence_rate", "determinism", "laminarity",
+                                    "avg_diag_length", "avg_vert_length", "d_entropy", "v_entropy"])
         if x.empty:
             return out
 
         x = x.values
-        rr, det = calc_RQA(x, x, dim, tau, threshold, lmin)
-        out.loc[len(out)] = [rr, det]
+        out.loc[len(out)] = calc_RQA(x, x, dim, tau, threshold, lmin)
         return out
 
 
@@ -86,7 +108,8 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
             self, x: pd.DataFrame, colA: t.Union[str, int] = 0, colB: t.Union[str, int] = 0,
             dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG007
     ) -> pd.DataFrame:
-        out = pd.DataFrame(columns=["recurrence_rate", "determinism"])
+        out = pd.DataFrame(columns=["recurrence_rate", "determinism", "laminarity",
+                                    "avg_diag_length", "avg_vert_length", "d_entropy", "v_entropy"])
         if x.empty:
             return out
         if isinstance(colA, int):
@@ -98,6 +121,5 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
         if isinstance(colB, str):
             xB = x.loc[:, colB].values
 
-        rr, det = calc_RQA(xA, xB, dim, tau, threshold, lmin)
-        out.loc[len(out)] = [rr, det]
+        out.loc[len(out)] = calc_RQA(xA, xB, dim, tau, threshold, lmin)
         return out
