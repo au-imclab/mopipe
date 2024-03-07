@@ -103,10 +103,15 @@ def calc_rqa(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: fl
     v_sum = d_line_dist[lmin:].sum()
     avg_vert_length = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / v_sum if v_sum > 0 else 0
 
-    m = d_line_dist[lmin:] > 0
-    d_entropy = -(d_line_dist[lmin:][m] * np.log(d_line_dist[lmin:][m])).sum()
-    m = v_line_dist[lmin:] > 0
-    v_entropy = -(v_line_dist[lmin:][m] * np.log(v_line_dist[lmin:][m])).sum()
+    d_line_dist[lmin:] > 0
+    d_probs = d_line_dist[lmin:][d_line_dist[lmin:] > 0]
+    d_probs /= d_probs.sum()
+    d_entropy = -(d_probs * np.log(d_probs)).sum()
+
+    v_line_dist[lmin:] > 0
+    v_probs = v_line_dist[lmin:][v_line_dist[lmin:] > 0]
+    v_probs /= v_probs.sum()
+    v_entropy = -(v_probs * np.log(v_probs)).sum()
 
     return rr, det, lam, avg_diag_length, avg_vert_length, d_entropy, v_entropy
 
