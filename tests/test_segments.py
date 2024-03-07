@@ -3,7 +3,7 @@ import pandas as pd
 import pytest  # type: ignore
 
 from mopipe.core.segments.seg import Segment
-from mopipe.segment import ColMeans, Mean, RQAStats, CrossRQAStats
+from mopipe.segment import ColMeans, Mean, RQAStats, CrossRQAStats, WindowedCrossRQAStats
 
 
 class TestMean:
@@ -80,3 +80,17 @@ class TestCrossRQAStats:
         assert res.loc[0, "recurrence_rate"] == 0.5
         res = segment.process(x)
         assert res.loc[0, "recurrence_rate"] == 0.5
+
+
+class TestWindowedCrossRQAStats:
+    @pytest.fixture
+    def segment(self) -> Segment:
+        return WindowedCrossRQAStats("TestWindowedCrossRQAStats")
+
+    def test_cross_recurrence_measures(self, segment: Segment) -> None:
+        x = pd.DataFrame({"a": [1,1,2,2,1,1,1,1], "b": [3,3,2,2,3,3,2,2]})
+        res = segment.process(x, colA=0, colB=1, window=4, step=2)
+        assert res.shape[0] == 3
+        assert res.loc[0, "recurrence_rate"] == 0.25
+        assert res.loc[1, "recurrence_rate"] == 0.25
+        assert res.loc[2, "recurrence_rate"] == 0.

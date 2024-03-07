@@ -73,8 +73,8 @@ def calc_RQA(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: fl
 
     rr_sum = recurrence_matrix.sum()
     rr = rr_sum / msize**2
-    det = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum
-    lam = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum
+    det = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum if rr_sum > 0 else 0
+    lam = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum if rr_sum > 0 else 0
 
     d_sum = d_line_dist[lmin:].sum()
     avg_diag_length = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / d_sum if d_sum > 0 else 0
@@ -122,4 +122,27 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
             xB = x.loc[:, colB].values
 
         out.loc[len(out)] = calc_RQA(xA, xB, dim, tau, threshold, lmin)
+        return out
+
+
+class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    def process(
+            self, x: pd.DataFrame, colA: t.Union[str, int] = 0, colB: t.Union[str, int] = 0,
+            dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, window: int = 100, step: int = 10, **kwargs  # noqa: ARG009
+    ) -> pd.DataFrame:
+        out = pd.DataFrame(columns=["recurrence_rate", "determinism", "laminarity",
+                                    "avg_diag_length", "avg_vert_length", "d_entropy", "v_entropy"])
+        if x.empty:
+            return out
+        if isinstance(colA, int):
+            xA = x.iloc[:, colA].values
+        if isinstance(colA, str):
+            xA = x.loc[:, colA].values
+        if isinstance(colB, int):
+            xB = x.iloc[:, colB].values
+        if isinstance(colB, str):
+            xB = x.loc[:, colB].values
+
+        for w in range(0, xA.shape[0]-window+1, step):
+            out.loc[len(out)] = calc_RQA(xA[w:w+window], xB[w:w+window], dim, tau, threshold, lmin)
         return out
