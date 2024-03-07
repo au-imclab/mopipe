@@ -3,7 +3,7 @@ import pandas as pd
 import pytest  # type: ignore
 
 from mopipe.core.segments.seg import Segment
-from mopipe.segment import ColMeans, Mean, RQAStats, CrossRQAStats, WindowedCrossRQAStats, CalcShift
+from mopipe.segment import ColMeans, Mean, RQAStats, CrossRQAStats, WindowedCrossRQAStats, CalcShift, SimpleGapFilling
 
 
 class TestMean:
@@ -106,3 +106,16 @@ class TestCalcShift:
         res = segment.process(x, col=0, shift=2)
         assert res.shape[1] == 3
         assert (res["a_shift"].values == [0,0,1,1,-1,-1,0,0]).mean() == 1.0
+
+
+class TestSimpleGapFilling:
+    @pytest.fixture
+    def segment(self) -> Segment:
+        return SimpleGapFilling("TestGapFilling")
+
+    def test_gap_filling(self, segment: Segment) -> None:
+        x = pd.DataFrame({"a": [1,1,2,np.nan,1,1,1,1], "b": [3,3,2,2,np.nan,np.nan,2,2]})
+        res = segment.process(x)
+        assert res["a"][3] == 1.5
+        assert res["b"][4] == 2
+        assert res["b"][5] == 2

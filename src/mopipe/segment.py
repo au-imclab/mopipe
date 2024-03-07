@@ -56,6 +56,13 @@ class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput
         return x
 
 
+class SimpleGapFilling(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    def process(
+            self, x: pd.DataFrame, **kwargs  # noqa: ARG001
+    ) -> pd.DataFrame:
+        return x.interpolate(method='linear')
+
+
 def calc_RQA(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2):
     embed_data_x, embed_data_y = [], []
     for i in range(dim):
