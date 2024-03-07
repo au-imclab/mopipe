@@ -45,4 +45,5 @@ def test_reading_events():
     )
     timeseries = reader.read()
     metadata = reader.metadata
-    assert metadata.events is not None
+    assert metadata["event"] is not None
+    assert len(metadata["event"]) == 3
