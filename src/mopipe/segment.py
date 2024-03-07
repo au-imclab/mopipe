@@ -38,37 +38,66 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
         raise ValueError(msg)
 
 
+def calc_RQA(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2):
+    embed_data_x, embed_data_y = [], []
+    for i in range(dim):
+        embed_data_x.append(x[i*tau:x.shape[0]-(dim-i-1)*tau])
+        embed_data_y.append(y[i*tau:y.shape[0]-(dim-i-1)*tau])
+    embed_data_x, embed_data_y = np.array(embed_data_x), np.array(embed_data_y)
+
+    distance_matrix = scipy.spatial.distance_matrix(embed_data_x.T, embed_data_y.T)
+    recurrence_matrix = distance_matrix < threshold
+    msize = recurrence_matrix.shape[0]
+
+    line_dist = np.zeros(msize+1)
+    for i in range(-msize+1, msize):
+        d = np.diagonal(recurrence_matrix, i)
+        cline = 0
+        for e in d:
+            if e:
+                cline += 1
+            else:
+                line_dist[cline] += 1
+                cline = 0
+        line_dist[cline] += 1
+
+    rr = recurrence_matrix.mean()
+    det = (line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / recurrence_matrix.sum()
+
+    return rr, det
+
+
 class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.Series, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG004
-    ) -> pd.Series:
+            self, x: pd.Series, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG005
+    ) -> pd.DataFrame:
         out = pd.DataFrame(columns=["recurrence_rate", "determinism"])
         if x.empty:
             return out
 
         x = x.values
-        embed_data = []
-        for i in range(dim):
-            embed_data.append(x[i*tau:x.shape[0]-(dim-i-1)*tau])
-        embed_data = np.array(embed_data)
+        rr, det = calc_RQA(x, x, dim, tau, threshold, lmin)
+        out.loc[len(out)] = [rr, det]
+        return out
 
-        distance_matrix = scipy.spatial.distance_matrix(embed_data.T, embed_data.T)
-        recurrence_matrix = distance_matrix < threshold
-        msize = recurrence_matrix.shape[0] 
-    
-        line_dist = np.zeros(msize+1)
-        for i in range(-msize+1, msize):
-            d = np.diagonal(recurrence_matrix, i)
-            cline = 0
-            for e in d:
-                if e:
-                    cline += 1
-                else:
-                    line_dist[cline] += 1
-                    cline = 0
-            line_dist[cline] += 1
 
-        rr = recurrence_matrix.mean()
-        det = (line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / recurrence_matrix.sum()
+class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    def process(
+            self, x: pd.DataFrame, colA: t.Union[str, int] = 0, colB: t.Union[str, int] = 0,
+            dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG007
+    ) -> pd.DataFrame:
+        out = pd.DataFrame(columns=["recurrence_rate", "determinism"])
+        if x.empty:
+            return out
+        if isinstance(colA, int):
+            xA = x.iloc[:, colA].values
+        if isinstance(colA, str):
+            xA = x.loc[:, colA].values
+        if isinstance(colB, int):
+            xB = x.iloc[:, colB].values
+        if isinstance(colB, str):
+            xB = x.loc[:, colB].values
+
+        rr, det = calc_RQA(xA, xB, dim, tau, threshold, lmin)
         out.loc[len(out)] = [rr, det]
         return out
