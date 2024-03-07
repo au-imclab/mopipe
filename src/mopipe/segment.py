@@ -8,7 +8,7 @@ from mopipe.core.common.util import int_or_str_slice
 from mopipe.core.segments.inputs import AnySeriesInput, MultivariateSeriesInput, UnivariateSeriesInput
 from mopipe.core.segments.outputs import SingleNumericValueOutput, UnivariateSeriesOutput, MultivariateSeriesOutput
 from mopipe.core.segments.seg import Segment
-from mopipe.core.segments.segmenttypes import SummaryType, AnalysisType
+from mopipe.core.segments.segmenttypes import SummaryType, AnalysisType, TransformType
 
 
 class Mean(SummaryType, AnySeriesInput, SingleNumericValueOutput, Segment):
@@ -36,6 +36,24 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
             return x.select_dtypes(include="number").mean()
         msg = f"Invalid col type {type(col)} provided, Must be None, int, str, or a slice."
         raise ValueError(msg)
+
+
+class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    def process(
+            self, x: pd.DataFrame, col: t.Union[str, int] = 0, shift: int = 1, **kwargs  # noqa: ARG003
+    ) -> pd.DataFrame:
+        col_data, col_name = None, None
+        if isinstance(col, int):
+            col_data = x.iloc[:, col].values
+            col_name = x.columns[col]
+        if isinstance(col, str):
+            col_data = x[col].values
+            col_name = col
+        new_col_name = col_name + "_shift"
+        new_col_data = np.concatenate((np.zeros(shift),
+                            col_data[shift:] - col_data[:-shift]))
+        x[new_col_name] = new_col_data
+        return x
 
 
 def calc_RQA(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2):

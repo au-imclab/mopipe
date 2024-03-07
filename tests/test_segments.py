@@ -3,7 +3,7 @@ import pandas as pd
 import pytest  # type: ignore
 
 from mopipe.core.segments.seg import Segment
-from mopipe.segment import ColMeans, Mean, RQAStats, CrossRQAStats, WindowedCrossRQAStats
+from mopipe.segment import ColMeans, Mean, RQAStats, CrossRQAStats, WindowedCrossRQAStats, CalcShift
 
 
 class TestMean:
@@ -94,3 +94,15 @@ class TestWindowedCrossRQAStats:
         assert res.loc[0, "recurrence_rate"] == 0.25
         assert res.loc[1, "recurrence_rate"] == 0.25
         assert res.loc[2, "recurrence_rate"] == 0.
+
+
+class TestCalcShift:
+    @pytest.fixture
+    def segment(self) -> Segment:
+        return CalcShift("TestCalcShift")
+
+    def test_calc_shift(self, segment: Segment) -> None:
+        x = pd.DataFrame({"a": [1,1,2,2,1,1,1,1], "b": [3,3,2,2,3,3,2,2]})
+        res = segment.process(x, col=0, shift=2)
+        assert res.shape[1] == 3
+        assert (res["a_shift"].values == [0,0,1,1,-1,-1,0,0]).mean() == 1.0
