@@ -3,7 +3,7 @@ import pandas as pd
 import pytest  # type: ignore
 
 from mopipe.core.segments.seg import Segment
-from mopipe.segment import ColMeans, Mean
+from mopipe.segment import ColMeans, Mean, RQAStats
 
 
 class TestMean:
@@ -47,3 +47,19 @@ class TestColMeans:
         df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
         with pytest.raises(ValueError):
             segment.process(df, col=1.5)
+
+
+class TestRQSStats:
+    @pytest.fixture
+    def segment(self) -> Segment:
+        return RQAStats("TestRQAStats")
+
+    def test_recurrence_measures(self, segment: Segment) -> None:
+        x = pd.Series([1,1,2,2])
+        res = segment.process(x)
+        assert res.loc[0, "recurrence_rate"] == 0.5
+        assert res.loc[0, "determinism"] == 0.5
+        res = segment.process(x, lmin=5)
+        assert res.loc[0, "determinism"] == 0
+        res = segment.process(x, threshold=2)
+        assert res.loc[0, "recurrence_rate"] == 1

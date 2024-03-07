@@ -42,7 +42,7 @@ class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Se
     def process(
             self, x: pd.Series, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs  # noqa: ARG004
     ) -> pd.Series:
-        out = pd.DataFrame(columns=["recurrence_rate"])
+        out = pd.DataFrame(columns=["recurrence_rate", "determinism"])
         if x.empty:
             return out
 
@@ -54,7 +54,21 @@ class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Se
 
         distance_matrix = scipy.spatial.distance_matrix(embed_data.T, embed_data.T)
         recurrence_matrix = distance_matrix < threshold
+        msize = recurrence_matrix.shape[0] 
+    
+        line_dist = np.zeros(msize+1)
+        for i in range(-msize+1, msize):
+            d = np.diagonal(recurrence_matrix, i)
+            cline = 0
+            for e in d:
+                if e:
+                    cline += 1
+                else:
+                    line_dist[cline] += 1
+                    cline = 0
+            line_dist[cline] += 1
 
         rr = recurrence_matrix.mean()
-        out.loc[len(out)] = [rr]
+        det = (line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / recurrence_matrix.sum()
+        out.loc[len(out)] = [rr, det]
         return out
