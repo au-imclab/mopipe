@@ -43,7 +43,6 @@ def test_reading_events():
         source=Path("tests/fixtures/sample_dance_with_header_and_events.tsv"),
         name="test",
     )
-    timeseries = reader.read()
     metadata = reader.metadata
     assert metadata["event"] is not None
     assert len(metadata["event"]) == 3
