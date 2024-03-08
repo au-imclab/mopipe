@@ -42,7 +42,7 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/au-imclab/mopipe"
-Documentation = "https://github.com/au-imclab/mopipe/README.md"
+Documentation = "https://au-imclab.github.io/mopipe/"
 Issues = "https://github.com/au-imclab/mopipe/issues"
 Source = "https://github.com/au-imclab/mopipe"
 
@@ -129,8 +129,18 @@ site_name = "mopipe documentation"
 # plugins = ["autorefs"]
 # markdown_extensions = ["callouts", "pymdownx.superfences"]
 pages = [
-  { title = "Mopipe API", name = "api", contents = [ "mopipe.*" ] },
   { title = "Mopipe Documentation Home", name = "index", source = "README.md" },
+  { title = "Premade Segments", name = "segment", contents = [ "mopipe.segment.*" ] },
+  { title = "Analysis Pipeline", name = "pipeline", contents = [ "mopipe.core.analysis.pipeline.*" ] },
+  { title = "Reader", name = "reader", contents = [ "mopipe.core.data.reader.*" ] },
+  { title = "Collator", name = "collator", contents = [ "mopipe.core.data.collator.*" ] },
+  { title = "Experiment", name = "experiment", contents = [ "mopipe.core.data.experiment.*" ] },
+  { title = "Segment Types", name = "segmenttypes", contents = [ "mopipe.core.segments.segmenttypes.*" ] },
+  { title = "Base Segment", name = "seg", contents = [ "mopipe.core.segments.seg.*" ] },
+  { title = "IO", name = "io", contents = [ "mopipe.core.segments.io.*", "mopipe.core.segments.inputs.*", "mopipe.core.segments.outputs.*" ] },
+  { title = "QTM", name = "qtm", contents = [ "mopipe.core.common.qtm.*" ] },
+  { title = "Data Structures", name = "datastructs", contents = [ "mopipe.core.common.datastructs.*", "mopipe.core.data.empirical.*" ] },
+  { title = "Other", name = "other", contents = [ "mopipe.core.common.util.*", "mopipe.core.analysis.rqa.*" ] },
 ]
 
 [tool.black]

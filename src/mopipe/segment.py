@@ -12,7 +12,17 @@ from mopipe.core.segments.segmenttypes import AnalysisType, SummaryType, Transfo
 
 
 class Mean(SummaryType, AnySeriesInput, SingleNumericValueOutput, Segment):
+    """Calculate the mean of the input series."""
+
     def process(self, x: t.Union[pd.Series, pd.DataFrame], **kwargs) -> float:  # noqa: ARG002
+        """Process the input series and return the mean value.
+
+        Args:
+            x (pd.Series | pd.DataFrame): The input series.
+
+        Returns:
+            float: The mean value.
+        """
         if x.empty:
             return np.nan
         mean = np.nanmean(x)
@@ -20,12 +30,23 @@ class Mean(SummaryType, AnySeriesInput, SingleNumericValueOutput, Segment):
 
 
 class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Segment):
+    """Calculate the mean of each column in the input dataframe."""
+
     def process(
         self,
         x: pd.DataFrame,
         col: t.Union[str, int, slice, None] = None,
         **kwargs,  # noqa: ARG002
     ) -> pd.Series:
+        """Process the input dataframe and return the mean value of each column.
+
+        Args:
+            x (pd.DataFrame): The input dataframe.
+            col (str | int | slice | None, optional): The column to calculate the mean for. Defaults to None.
+
+        Returns:
+            pd.Series: The mean value of each column.
+        """
         slice_type = None
         if x.empty:
             return pd.Series()
@@ -42,6 +63,8 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
 
 
 class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    """Calculate the difference between the input series and a shifted version of itself."""
+
     def process(
         self,
         x: pd.DataFrame,
@@ -49,6 +72,17 @@ class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput
         shift: int = 1,
         **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
+        """Process the input dataframe and return the difference between the input series and a shifted version of
+        itself.
+
+        Args:
+            x (pd.DataFrame): The input dataframe.
+            cols (pd.Index | None, optional): The columns to calculate the difference for. Defaults to None.
+            shift (int, optional): The number of periods to shift. Defaults to 1.
+
+        Returns:
+            pd.DataFrame: The difference between the input series and a shifted version of itself.
+        """
         if cols is None:
             cols = x.columns
         for col_name in cols:
@@ -60,15 +94,27 @@ class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput
 
 
 class SimpleGapFilling(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    """Fill gaps in the input series with the linear interpolation."""
+
     def process(
         self,
         x: pd.DataFrame,
         **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
+        """Process the input dataframe and fill gaps in the input series with the linear interpolation.
+
+        Args:
+            x (pd.DataFrame): The input dataframe.
+
+        Returns:
+            pd.DataFrame: The input dataframe with gaps filled using linear interpolation.
+        """
         return x.interpolate(method="linear")
 
 
 class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    """Calculate Recurrence Quantification Analysis (RQA) statistics for the input series."""
+
     def process(
         self,
         x: pd.Series,
@@ -78,6 +124,18 @@ class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Se
         lmin: int = 2,
         **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
+        """Process the input series and return the RQA statistics.
+
+        Args:
+            x (pd.Series): The input series.
+            dim (int, optional): The embedding dimension. Defaults to 1.
+            tau (int, optional): The time delay. Defaults to 1.
+            threshold (float, optional): The recurrence threshold. Defaults to 0.1.
+            lmin (int, optional): The minimum line length. Defaults to 2.
+
+        Returns:
+            pd.DataFrame: The RQA statistics.
+        """
         out = pd.DataFrame(
             columns=[
                 "recurrence_rate",
@@ -98,6 +156,8 @@ class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Se
 
 
 class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    """Calculate Recurrence Quantification Analysis (RQA) statistics between two input series."""
+
     def process(
         self,
         x: pd.DataFrame,
@@ -109,6 +169,20 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
         lmin: int = 2,
         **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
+        """Process the input dataframe and return the RQA statistics between two input series.
+
+        Args:
+            x (pd.DataFrame): The input dataframe.
+            col_a (str | int): The first column to calculate the RQA statistics for.
+            col_b (str | int): The second column to calculate the RQA statistics for.
+            dim (int, optional): The embedding dimension. Defaults to 1.
+            tau (int, optional): The time delay. Defaults to 1.
+            threshold (float, optional): The recurrence threshold. Defaults to 0.1.
+            lmin (int, optional): The minimum line length. Defaults to 2.
+
+        Returns:
+            pd.DataFrame: The RQA statistics.
+        """
         out = pd.DataFrame(
             columns=[
                 "recurrence_rate",
@@ -136,6 +210,8 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
 
 
 class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+    """Calculate Recurrence Quantification Analysis (RQA) statistics between two input series in a moving window."""
+
     def process(
         self,
         x: pd.DataFrame,
@@ -149,6 +225,22 @@ class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateS
         step: int = 10,
         **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
+        """Process the input dataframe and return the RQA statistics between two input series in a moving window.
+
+        Args:
+            x (pd.DataFrame): The input dataframe.
+            col_a (str | int): The first column to calculate the RQA statistics for.
+            col_b (str | int): The second column to calculate the RQA statistics for.
+            dim (int, optional): The embedding dimension. Defaults to 1.
+            tau (int, optional): The time delay. Defaults to 1.
+            threshold (float, optional): The recurrence threshold. Defaults to 0.1.
+            lmin (int, optional): The minimum line length. Defaults to 2.
+            window (int, optional): The window size. Defaults to 100.
+            step (int, optional): The step size. Defaults to 10.
+
+        Returns:
+            pd.DataFrame: The RQA statistics.
+        """
         out = pd.DataFrame(
             columns=[
                 "recurrence_rate",

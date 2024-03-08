@@ -11,6 +11,19 @@ def calc_rqa(
     threshold: float = 0.1,
     lmin: int = 2,
 ) -> list[float]:
+    """Calculate Recurrence Quantification Analysis (RQA) statistics for the input series.
+
+    Args:
+        x (ExtensionArray | np.ndarray): The input series.
+        y (ExtensionArray | np.ndarray): The input series.
+        dim (int, optional): The embedding dimension. Defaults to 1.
+        tau (int, optional): The time delay. Defaults to 1.
+        threshold (float, optional): The recurrence threshold. Defaults to 0.1.
+        lmin (int, optional): The minimum line length. Defaults to 2.
+
+    Returns:
+        list[float]: The RQA statistics.
+    """
     embed_data_x: list[np.ndarray] | np.ndarray = []
     embed_data_y: list[np.ndarray] | np.ndarray = []
     for i in range(dim):
