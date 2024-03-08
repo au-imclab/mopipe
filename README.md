@@ -9,7 +9,9 @@
 
 - [MoPipe](#mopipe)
   - [Installation](#installation)
+  - [Documentation](#documentation)
   - [Contributing](#contributing)
+  - [Development Environmnet](#development-environmnet)
   - [License](#license)
 
 ## Installation
@@ -17,6 +19,10 @@
 ```console
 pip install mopipe
 ```
+
+## Documentation
+
+The official documentation is available at [https://au-imclab.github.io/mopipe/]](https://au-imclab.github.io/mopipe/).
 
 ## Contributing
 
