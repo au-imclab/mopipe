@@ -20,6 +20,7 @@ class TestPipeline:
         output = pipeline.run(x=1)
         assert output == segment2.process_output
 
+
 class MockSegment:
     def __init__(self):
         self.process_output = None

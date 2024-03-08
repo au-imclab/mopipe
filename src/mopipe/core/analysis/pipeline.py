@@ -96,7 +96,6 @@ class Pipeline(t.MutableSequence[Segment]):
                 raise ValueError(msg)
             self._segments[index] = list(value)
 
-
     @t.overload
     def __delitem__(self, index: int) -> None: ...
 

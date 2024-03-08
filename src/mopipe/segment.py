@@ -2,8 +2,8 @@ import typing as t
 
 import numpy as np
 import pandas as pd
-import scipy
 
+from mopipe.core.analysis import calc_rqa
 from mopipe.core.common.util import int_or_str_slice
 from mopipe.core.segments.inputs import AnySeriesInput, MultivariateSeriesInput, UnivariateSeriesInput
 from mopipe.core.segments.outputs import MultivariateSeriesOutput, SingleNumericValueOutput, UnivariateSeriesOutput
@@ -21,7 +21,10 @@ class Mean(SummaryType, AnySeriesInput, SingleNumericValueOutput, Segment):
 
 class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Segment):
     def process(
-        self, x: pd.DataFrame, col: t.Union[str, int, slice, None] = None, **kwargs  # noqa: ARG002
+        self,
+        x: pd.DataFrame,
+        col: t.Union[str, int, slice, None] = None,
+        **kwargs,  # noqa: ARG002
     ) -> pd.Series:
         slice_type = None
         if x.empty:
@@ -40,103 +43,83 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
 
 class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.DataFrame, cols: t.Union[list[str], None] = None, shift: int = 1, **kwargs
+        self,
+        x: pd.DataFrame,
+        cols: pd.Index | None = None,
+        shift: int = 1,
+        **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
         if cols is None:
             cols = x.columns
         for col_name in cols:
             col_data = x[col_name].values
             new_col_name = col_name + "_shift"
-            new_col_data = np.concatenate((np.zeros(shift),
-                                col_data[shift:] - col_data[:-shift]))
+            new_col_data = np.concatenate((np.zeros(shift), col_data[shift:] - col_data[:-shift]))
             x[new_col_name] = new_col_data
         return x
 
 
 class SimpleGapFilling(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.DataFrame, **kwargs
+        self,
+        x: pd.DataFrame,
+        **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
         return x.interpolate(method="linear")
 
 
-def calc_rqa(x: np.array, y: np.array, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2):
-    embed_data_x, embed_data_y = [], []
-    for i in range(dim):
-        embed_data_x.append(x[i*tau:x.shape[0]-(dim-i-1)*tau])
-        embed_data_y.append(y[i*tau:y.shape[0]-(dim-i-1)*tau])
-    embed_data_x, embed_data_y = np.array(embed_data_x), np.array(embed_data_y)
-
-    distance_matrix = scipy.spatial.distance_matrix(embed_data_x.T, embed_data_y.T)
-    recurrence_matrix = distance_matrix < threshold
-    msize = recurrence_matrix.shape[0]
-
-    d_line_dist = np.zeros(msize+1)
-    for i in range(-msize+1, msize):
-        cline = 0
-        for e in np.diagonal(recurrence_matrix, i):
-            if e:
-                cline += 1
-            else:
-                d_line_dist[cline] += 1
-                cline = 0
-        d_line_dist[cline] += 1
-
-    v_line_dist = np.zeros(msize+1)
-    for i in range(msize):
-        cline = 0
-        for e in recurrence_matrix[:,i]:
-            if e:
-                cline += 1
-            else:
-                v_line_dist[cline] += 1
-                cline = 0
-        v_line_dist[cline] += 1
-
-    rr_sum = recurrence_matrix.sum()
-    rr = rr_sum / msize**2
-    det = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum if rr_sum > 0 else 0
-    lam = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / rr_sum if rr_sum > 0 else 0
-
-    d_sum = d_line_dist[lmin:].sum()
-    avg_diag_length = (d_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / d_sum if d_sum > 0 else 0
-    v_sum = d_line_dist[lmin:].sum()
-    avg_vert_length = (v_line_dist[lmin:] * np.arange(msize+1)[lmin:]).sum() / v_sum if v_sum > 0 else 0
-
-    d_line_dist[lmin:] > 0
-    d_probs = d_line_dist[lmin:][d_line_dist[lmin:] > 0]
-    d_probs /= d_probs.sum()
-    d_entropy = -(d_probs * np.log(d_probs)).sum()
-
-    v_line_dist[lmin:] > 0
-    v_probs = v_line_dist[lmin:][v_line_dist[lmin:] > 0]
-    v_probs /= v_probs.sum()
-    v_entropy = -(v_probs * np.log(v_probs)).sum()
-
-    return rr, det, lam, avg_diag_length, avg_vert_length, d_entropy, v_entropy
-
-
 class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.Series, dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs
+        self,
+        x: pd.Series,
+        dim: int = 1,
+        tau: int = 1,
+        threshold: float = 0.1,
+        lmin: int = 2,
+        **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
-        out = pd.DataFrame(columns=["recurrence_rate", "determinism", "laminarity",
-                                    "avg_diag_length", "avg_vert_length", "d_entropy", "v_entropy"])
+        out = pd.DataFrame(
+            columns=[
+                "recurrence_rate",
+                "determinism",
+                "laminarity",
+                "avg_diag_length",
+                "avg_vert_length",
+                "d_entropy",
+                "v_entropy",
+            ]
+        )
         if x.empty:
             return out
 
-        x = x.values
-        out.loc[len(out)] = calc_rqa(x, x, dim, tau, threshold, lmin)
+        xv = x.values
+        out.loc[len(out)] = calc_rqa(xv, xv, dim, tau, threshold, lmin)
         return out
 
 
 class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.DataFrame, col_a: t.Union[str, int] = 0, col_b: t.Union[str, int] = 0,
-            dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, **kwargs
+        self,
+        x: pd.DataFrame,
+        col_a: t.Union[str, int] = 0,
+        col_b: t.Union[str, int] = 0,
+        dim: int = 1,
+        tau: int = 1,
+        threshold: float = 0.1,
+        lmin: int = 2,
+        **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
-        out = pd.DataFrame(columns=["recurrence_rate", "determinism", "laminarity",
-                                    "avg_diag_length", "avg_vert_length", "d_entropy", "v_entropy"])
+        out = pd.DataFrame(
+            columns=[
+                "recurrence_rate",
+                "determinism",
+                "laminarity",
+                "avg_diag_length",
+                "avg_vert_length",
+                "d_entropy",
+                "v_entropy",
+            ]
+        )
         if x.empty:
             return out
         if isinstance(col_a, int):
@@ -154,12 +137,29 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
 
 class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
     def process(
-            self, x: pd.DataFrame, col_a: t.Union[str, int] = 0, col_b: t.Union[str, int] = 0,
-            dim: int = 1, tau: int = 1, threshold: float = 0.1, lmin: int = 2, window: int = 100,
-            step: int = 10, **kwargs
+        self,
+        x: pd.DataFrame,
+        col_a: t.Union[str, int] = 0,
+        col_b: t.Union[str, int] = 0,
+        dim: int = 1,
+        tau: int = 1,
+        threshold: float = 0.1,
+        lmin: int = 2,
+        window: int = 100,
+        step: int = 10,
+        **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
-        out = pd.DataFrame(columns=["recurrence_rate", "determinism", "laminarity",
-                                    "avg_diag_length", "avg_vert_length", "d_entropy", "v_entropy"])
+        out = pd.DataFrame(
+            columns=[
+                "recurrence_rate",
+                "determinism",
+                "laminarity",
+                "avg_diag_length",
+                "avg_vert_length",
+                "d_entropy",
+                "v_entropy",
+            ]
+        )
         if x.empty:
             return out
         if isinstance(col_a, int):
@@ -171,6 +171,6 @@ class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateS
         if isinstance(col_b, str):
             xb = x.loc[:, col_b].values
 
-        for w in range(0, xa.shape[0]-window+1, step):
-            out.loc[len(out)] = calc_rqa(xa[w:w+window], xb[w:w+window], dim, tau, threshold, lmin)
+        for w in range(0, xa.shape[0] - window + 1, step):
+            out.loc[len(out)] = calc_rqa(xa[w : w + window], xb[w : w + window], dim, tau, threshold, lmin)
         return out
