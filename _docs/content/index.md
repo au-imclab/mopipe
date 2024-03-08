@@ -9,6 +9,7 @@
 
 - [MoPipe](#mopipe)
   - [Installation](#installation)
+  - [Contributing](#contributing)
   - [License](#license)
 
 ## Installation
@@ -17,6 +18,14 @@
 pip install mopipe
 ```
 
+## Contributing
+
+Contributions are welcome! Please refer to [CONTRIBUTING.md](https://github.com/au-imclab/mopipe/blob/main/CONTRIBUTING.md) for more information.
+
+## Development Environmnet
+
+Please refer to the [Development Environment section of CONTRIBUTING.md](https://github.com/au-imclab/mopipe/blob/main/CONTRIBUTING.md#development-environment)
+
 ## License
 
-`mopipe` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) [license](./LICENSE).
+`mopipe` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) [license](https://github.com/au-imclab/mopipe/blob/main/LICENSE).

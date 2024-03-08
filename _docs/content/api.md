@@ -70,6 +70,10 @@ def run(**kwargs) -> t.Any
 
 Run the pipeline.
 
+<a id="mopipe.core.analysis.rqa"></a>
+
+# mopipe.core.analysis.rqa
+
 <a id="mopipe.core.analysis"></a>
 
 # mopipe.core.analysis
@@ -189,7 +193,7 @@ Tuple[datetime, float]
 #### parse\_event
 
 ```python
-def parse_event(event: list[str]) -> tuple[int, float]
+def parse_event(event: list[str]) -> list[tuple[str, int, float]]
 ```
 
 Parse the event data from a list of strings.
@@ -201,8 +205,8 @@ event : List[str]
 
 Returns
 -------
-Tuple[float, float]
-    Tuple containing the index and elapsed time.
+Tuple[str, float, float]
+    Tuple containing the event name, index and elapsed time.
 
 <a id="mopipe.core.common.qtm.parse_marker_names"></a>
 
