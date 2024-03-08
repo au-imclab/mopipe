@@ -22,7 +22,7 @@ pip install mopipe
 
 ## Documentation
 
-The official documentation is available at [https://au-imclab.github.io/mopipe/]](https://au-imclab.github.io/mopipe/).
+The official documentation is available at [https://au-imclab.github.io/mopipe/](https://au-imclab.github.io/mopipe/).
 
 ## Contributing
 
