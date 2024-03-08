@@ -36,6 +36,7 @@ classifiers = [
 ]
 dependencies = [
   "pandas",
+  "scipy",
   "StrEnum; python_version < '3.11'",
 ]
 
