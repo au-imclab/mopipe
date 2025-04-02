@@ -56,8 +56,11 @@ dependencies = [
   "pandas",
   "StrEnum; python_version < '3.11'",
 ]
+installer = "uv"
+
 [tool.pytest.ini_options]
 pythonpath = "src"
+
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
 test-cov = "coverage run -m pytest {args:tests}"
@@ -84,17 +87,20 @@ dependencies = [
   "types_openpyxl",
   "StrEnum; python_version < '3.11'",
 ]
+
 [tool.hatch.envs.lint.scripts]
 typing = "mypy --install-types --non-interactive {args:src/mopipe tests}"
 style = [
   "ruff check {args:.}",
   "black --check --diff {args:.}",
 ]
+
 fmt = [
   "black {args:.}",
   "ruff --fix {args:.}",
   "style",
 ]
+
 all = [
   "style",
   "typing",
