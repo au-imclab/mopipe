@@ -38,24 +38,24 @@ class EnumContainsMeta(EnumMeta):
     it will return the value.
     """
 
-    def __contains__(self, item: object) -> bool:
+    def __contains__(cls, item: object) -> bool:
         if not isinstance(item, str):
             return super().__contains__(item)
         try:
-            self[item]
+            cls[item]
         except KeyError:
             return False
         else:
             return True
 
-    def __getitem__(self, item: str) -> str:  # type: ignore
+    def __getitem__(cls, item: str) -> str:  # type: ignore
         if not isinstance(item, str):
             return str(super().__getitem__(item))
-        if item in self._member_map_:
-            return str(self._member_map_[item].value)
-        if item in self._value2member_map_:
+        if item in cls._member_map_:
+            return str(cls._member_map_[item].value)
+        if item in cls._value2member_map_:
             return item
-        msg = f"{item} is not a valid member of {self.__class__.__name__}"
+        msg = f"{item} is not a valid member of {cls.__name__}"
         raise KeyError(msg)
 
 

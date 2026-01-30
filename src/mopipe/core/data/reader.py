@@ -226,7 +226,7 @@ class MocapReader(AbstractReader):
         m: str
         for m in self.metadata[str(MocapMetadataEntries["marker_names"])]:
             cols = [*cols, f"{m}_x", f"{m}_y", f"{m}_z"]
-        df = df.set_axis(cols, axis="columns", copy=False)
+        df = df.set_axis(cols, axis="columns")
 
         # set the index to the frame number
         df.set_index("frame", inplace=True)

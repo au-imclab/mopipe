@@ -52,10 +52,15 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
             return pd.Series()
         if isinstance(col, slice):
             slice_type = int_or_str_slice(col)
-        if isinstance(col, int) or slice_type == int:
-            return x.iloc(axis=1)[col].mean()
-        if isinstance(col, str) or slice_type == str:
-            return x.loc(axis=1)[col].mean()
+        if isinstance(col, int) or slice_type is int:
+            if isinstance(col, str):
+                col = int(col)
+            elif not isinstance(col, int):
+                msg = "Invalid slice provided."
+                raise ValueError(msg)
+            return pd.Series(x.iloc(axis=1)[col].mean())
+        if isinstance(col, str) or slice_type is str:
+            return pd.Series(x.loc(axis=1)[col].mean())
         if col is None:
             return x.select_dtypes(include="number").mean()
         msg = f"Invalid col type {type(col)} provided, Must be None, int, str, or a slice."
@@ -87,6 +92,13 @@ class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput
             cols = x.columns
         for col_name in cols:
             col_data = x[col_name].values
+            # ensure column data is numeric
+            if col_data is None or not isinstance(col_data, np.ndarray):
+                msg = f"Column {col_name} data is not a numpy array."
+                raise ValueError(msg)
+            if not np.issubdtype(col_data.dtype, np.number):
+                msg = f"Column {col_name} is not numeric."
+                raise ValueError(msg)
             new_col_name = col_name + "_shift"
             new_col_data = np.concatenate((np.zeros(shift), col_data[shift:] - col_data[:-shift]))
             x[new_col_name] = new_col_data

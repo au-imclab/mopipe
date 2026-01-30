@@ -53,9 +53,9 @@ def int_or_str_slice(s: slice) -> t.Union[type[int], type[str]]:
 
 def df_slice(df: pd.DataFrame, s: slice) -> t.Union[pd.DataFrame, pd.Series]:
     slice_type = int_or_str_slice(s)
-    if slice_type == int:
+    if slice_type is int:
         return df.iloc[s]
-    if slice_type == str:
+    if slice_type is str:
         return df.loc[s]
     msg = "Invalid slice."
     raise ValueError(msg)
