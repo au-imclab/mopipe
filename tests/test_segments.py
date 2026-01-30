@@ -27,22 +27,26 @@ class TestColMeans:
     def test_process_with_int_col(self, segment: ColMeans) -> None:
         df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
         result = segment.process(df, col=0)
-        assert result == pd.Series([2.0])
+        assert isinstance(result, pd.Series)
+        assert result.array == [2.0]
 
     def test_process_with_str_col(self, segment: ColMeans) -> None:
         df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
         result = segment.process(df, col="A")
-        assert result == pd.Series([2.0])
+        assert isinstance(result, pd.Series)
+        assert result.array == [2.0]
 
     def test_process_with_slice_col(self, segment: ColMeans) -> None:
         df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
         output = segment.process(df, col=slice(0, 3))
-        assert np.array_equal(output.values, np.array([2.0, 5.0, 8.0]))
+        assert isinstance(output, pd.Series)
+        assert output.array == [2.0, 5.0, 8.0]
 
     def test_process_with_none_col(self, segment: ColMeans) -> None:
         df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
         output = segment.process(df, col=None)
-        assert np.array_equal(output.values, np.array([2.0, 5.0, 8.0]))
+        assert isinstance(output, pd.Series)
+        assert output.array == [2.0, 5.0, 8.0]
 
     def test_process_with_invalid_col(self, segment: ColMeans) -> None:
         df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "C": [7, 8, 9]})
@@ -106,7 +110,9 @@ class TestCalcShift:
         x = pd.DataFrame({"a": [1, 1, 2, 2, 1, 1, 1, 1], "b": [3, 3, 2, 2, 3, 3, 2, 2]})
         res = segment.process(x, cols=["a"], shift=2)
         assert res.shape[1] == 3
-        assert (res["a_shift"].values == [0, 0, 1, 1, -1, -1, 0, 0]).mean() == 1.0
+        assert "a_shift" in res.columns
+        assert res["a_shift"].array == [0, 0, 1, 1, -1, -1, 0, 0]
+        assert res["a_shift"].mean() == 0.0
 
 
 class TestSimpleGapFilling:

@@ -37,7 +37,7 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
         x: pd.DataFrame,
         col: t.Union[str, int, slice, None] = None,
         **kwargs,  # noqa: ARG002
-    ) -> pd.Series:
+    ) -> pd.Series[int | float | complex]:
         """Process the input dataframe and return the mean value of each column.
 
         Args:
@@ -49,13 +49,17 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
         """
         slice_type = None
         if x.empty:
-            return pd.Series()
+            return pd.Series(dtype=float)
         if isinstance(col, slice):
             slice_type = int_or_str_slice(col)
-        if isinstance(col, int) or slice_type is int:
-            return pd.Series(x.iloc(axis=1)[col].mean())
-        if isinstance(col, str) or slice_type is str:
-            return pd.Series(x.loc(axis=1)[col].mean())
+            if slice_type is int:
+                return pd.Series(x.iloc(axis=1)[col].mean(), dtype=float)
+            elif slice_type is str:
+                return pd.Series(x.loc(axis=1)[col].mean(), dtype=float)
+        if isinstance(col, int):
+            return pd.Series(x.iloc(axis=1)[col].mean(), dtype=float)
+        if isinstance(col, str):
+            return pd.Series(x.loc(axis=1)[col].mean(), dtype=float)
         if col is None:
             return x.select_dtypes(include="number").mean()
         msg = f"Invalid col type {type(col)} provided, Must be None, int, str, or a slice."
@@ -68,7 +72,7 @@ class CalcShift(TransformType, MultivariateSeriesInput, MultivariateSeriesOutput
     def process(
         self,
         x: pd.DataFrame,
-        cols: pd.Index | None = None,
+        cols: pd.Index | t.Iterable[str] | None = None,
         shift: int = 1,
         **kwargs,  # noqa: ARG002
     ) -> pd.DataFrame:
