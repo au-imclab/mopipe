@@ -53,11 +53,6 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
         if isinstance(col, slice):
             slice_type = int_or_str_slice(col)
         if isinstance(col, int) or slice_type is int:
-            if isinstance(col, str):
-                col = int(col)
-            elif not isinstance(col, int):
-                msg = "Invalid slice provided."
-                raise ValueError(msg)
             return pd.Series(x.iloc(axis=1)[col].mean())
         if isinstance(col, str) or slice_type is str:
             return pd.Series(x.loc(axis=1)[col].mean())
