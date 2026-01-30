@@ -6,7 +6,12 @@ import pandas as pd
 from mopipe.core.analysis import calc_rqa
 from mopipe.core.common.util import int_or_str_slice
 from mopipe.core.segments.inputs import AnySeriesInput, MultivariateSeriesInput, UnivariateSeriesInput
-from mopipe.core.segments.outputs import MultivariateSeriesOutput, SingleNumericValueOutput, UnivariateSeriesOutput
+from mopipe.core.segments.outputs import (
+    AnySeriesOutput,
+    MultivariateSeriesOutput,
+    SingleNumericValueOutput,
+    UnivariateSeriesOutput,
+)
 from mopipe.core.segments.seg import Segment
 from mopipe.core.segments.segmenttypes import AnalysisType, SummaryType, TransformType
 
@@ -123,7 +128,7 @@ class SimpleGapFilling(TransformType, MultivariateSeriesInput, MultivariateSerie
         return x.interpolate(method="linear")
 
 
-class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Segment):
+class RQAStats(AnalysisType, UnivariateSeriesInput, AnySeriesOutput, Segment):
     """Calculate Recurrence Quantification Analysis (RQA) statistics for the input series."""
 
     def process(
@@ -166,7 +171,7 @@ class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput, Se
         return out
 
 
-class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+class CrossRQAStats(AnalysisType, MultivariateSeriesInput, AnySeriesOutput, Segment):
     """Calculate Recurrence Quantification Analysis (RQA) statistics between two input series."""
 
     def process(
@@ -220,7 +225,7 @@ class CrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOut
         return out
 
 
-class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, MultivariateSeriesOutput, Segment):
+class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput, AnySeriesOutput, Segment):
     """Calculate Recurrence Quantification Analysis (RQA) statistics between two input series in a moving window."""
 
     def process(

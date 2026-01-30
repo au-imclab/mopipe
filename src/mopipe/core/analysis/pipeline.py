@@ -5,8 +5,16 @@ analysis steps (segments) on the data.
 """
 
 import typing as t
+from pathlib import Path
+
+from joblib import Memory
 
 from mopipe.core.segments import Segment
+
+
+def _execute_segment(segment: Segment, **kwargs) -> t.Any:
+    """Execute a segment. Top-level function for joblib caching compatibility."""
+    return segment(**kwargs)
 
 
 class Pipeline(t.MutableSequence[Segment]):
@@ -17,14 +25,36 @@ class Pipeline(t.MutableSequence[Segment]):
 
     _segments: t.MutableSequence[Segment]
 
-    def __init__(self, segments: t.Optional[t.MutableSequence[Segment]] = None) -> None:
-        """Initialize a Pipeline."""
+    def __init__(
+        self,
+        segments: t.Optional[t.MutableSequence[Segment]] = None,
+        cache_dir: t.Optional[t.Union[str, Path]] = None,
+    ) -> None:
+        """Initialize a Pipeline.
+
+        Parameters
+        ----------
+        segments : MutableSequence[Segment], optional
+            The segments to include in the pipeline.
+        cache_dir : str or Path, optional
+            Directory for caching segment results using joblib.Memory.
+            If None, caching is disabled.
+        """
         self._segments = [] if segments is None else segments
+        self._cache_dir = cache_dir
+        self._memory: t.Optional[Memory] = None
+        if cache_dir is not None:
+            self._memory = Memory(str(cache_dir), verbose=0)
 
     @property
     def segments(self) -> t.MutableSequence[Segment]:
         """The segments in the pipeline."""
         return self._segments
+
+    @property
+    def cache_dir(self) -> t.Optional[t.Union[str, Path]]:
+        """The cache directory."""
+        return self._cache_dir
 
     def _check_kwargs(self, **kwargs) -> None:
         """Check the arguments for the pipeline."""
@@ -41,14 +71,34 @@ class Pipeline(t.MutableSequence[Segment]):
         self._segments.append(segment)
         return len(self._segments) - 1
 
-    def run(self, **kwargs) -> t.Any:
-        """Run the pipeline."""
+    def clear_cache(self) -> None:
+        """Clear the pipeline cache."""
+        if self._memory is not None:
+            self._memory.clear(warn=False)
+
+    def run(self, *, cache: bool = True, **kwargs) -> t.Any:
+        """Run the pipeline.
+
+        Parameters
+        ----------
+        cache : bool, optional
+            Whether to use caching (if cache_dir was set). Defaults to True.
+        **kwargs
+            Arguments passed to the segments. Must include 'x' as the input data.
+
+        Returns
+        -------
+        Any
+            The output of the last segment in the pipeline.
+        """
         self._check_kwargs(**kwargs)
+        use_cache = cache and self._memory is not None
         for segment in self._segments:
-            # most basic version here
-            # we could also keep track of the output from each step
-            # if that is useful, for now it's just I -> Segment -> O -> Segment -> O -> ...
-            kwargs["x"] = segment(**kwargs)
+            if use_cache:
+                cached_fn = self._memory.cache(_execute_segment)  # type: ignore[union-attr]
+                kwargs["x"] = cached_fn(segment, **kwargs)
+            else:
+                kwargs["x"] = segment(**kwargs)
         return kwargs["x"]
 
     def __repr__(self) -> str:

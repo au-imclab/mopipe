@@ -14,9 +14,10 @@ else:
 from mopipe.core.common import maybe_generate_id
 
 if t.TYPE_CHECKING:
+    from mopipe.core.analysis.pipeline import Pipeline
     from mopipe.core.data import EmpiricalData
 
-from mopipe.core.data import MetaData
+from mopipe.core.data import MetaData, TimeseriesData
 
 
 class LDType(StrEnum):
@@ -55,6 +56,10 @@ class ExperimentLevel:
         self._timeseries = []
         self._level_metadata = level_metadata if level_metadata is not None else MetaData()
         self._data_names_map = {
+            LDType.TIMESERIES: {},
+            LDType.LEVELDATA: {},
+        }
+        self._data_ids_map = {
             LDType.TIMESERIES: {},
             LDType.LEVELDATA: {},
         }
@@ -196,6 +201,150 @@ class ExperimentLevel:
     def level_metadata(self, level_metadata: "MetaData") -> None:
         """Set the level metadata."""
         self._level_metadata = level_metadata
+
+    def get_timeseries_by_name(self, name: str) -> t.Optional["EmpiricalData"]:
+        """Look up a timeseries by name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the timeseries to find.
+
+        Returns
+        -------
+        EmpiricalData or None
+            The first matching timeseries, or None if not found.
+        """
+        indices = self._data_names_map[LDType.TIMESERIES].get(name)
+        if indices is None or len(indices) == 0:
+            return None
+        return self._timeseries[indices[0]]
+
+    def get_timeseries_by_id(self, data_id: str) -> t.Optional["EmpiricalData"]:
+        """Look up a timeseries by data ID.
+
+        Parameters
+        ----------
+        data_id : str
+            The ID of the timeseries to find.
+
+        Returns
+        -------
+        EmpiricalData or None
+            The first matching timeseries, or None if not found.
+        """
+        indices = self._data_ids_map[LDType.TIMESERIES].get(data_id)
+        if indices is None or len(indices) == 0:
+            return None
+        return self._timeseries[indices[0]]
+
+    def run_pipeline(
+        self,
+        pipeline: "Pipeline",
+        data_name: t.Optional[str] = None,
+        result_name: t.Optional[str] = None,
+        *,
+        store_result: bool = True,
+        **kwargs,
+    ) -> "EmpiricalData":
+        """Run a pipeline on timeseries data at this level.
+
+        Parameters
+        ----------
+        pipeline : Pipeline
+            The pipeline to run.
+        data_name : str, optional
+            Name of the timeseries to use as input. If None, uses the first available.
+        result_name : str, optional
+            Name for the result timeseries. Defaults to "{source_name}_processed".
+        store_result : bool, optional
+            Whether to store the result back on this level. Defaults to True.
+        **kwargs
+            Additional keyword arguments passed to pipeline.run().
+
+        Returns
+        -------
+        EmpiricalData
+            The result wrapped as a TimeseriesData.
+
+        Raises
+        ------
+        ValueError
+            If no timeseries data is available or the named timeseries is not found.
+        """
+        if len(self._timeseries) == 0:
+            msg = f"No timeseries data available on level {self.level_name} (ID: {self.level_id})."
+            raise ValueError(msg)
+
+        if data_name is not None:
+            source = self.get_timeseries_by_name(data_name)
+            if source is None:
+                msg = f"Timeseries '{data_name}' not found on level {self.level_name} (ID: {self.level_id})."
+                raise ValueError(msg)
+        else:
+            source = self._timeseries[0]
+
+        kwargs["x"] = source.data
+        result_data = pipeline.run(**kwargs)
+
+        if result_name is None:
+            result_name = f"{source.name}_processed"
+
+        result = TimeseriesData(
+            data=result_data,
+            metadata=source.metadata,
+            name=result_name,
+        )
+
+        if store_result:
+            self.add_timeseries(result)
+
+        return result
+
+    def run_pipeline_on_descendants(
+        self,
+        pipeline: "Pipeline",
+        target_depth: t.Optional[int] = None,
+        data_name: t.Optional[str] = None,
+        result_name: t.Optional[str] = None,
+        **kwargs,
+    ) -> list["EmpiricalData"]:
+        """Run a pipeline on descendant levels that have timeseries data.
+
+        Parameters
+        ----------
+        pipeline : Pipeline
+            The pipeline to run.
+        target_depth : int, optional
+            Only run on levels at this depth. If None, runs on all descendants with data.
+        data_name : str, optional
+            Name of the timeseries to use as input on each level.
+        result_name : str, optional
+            Name for the result timeseries on each level.
+        **kwargs
+            Additional keyword arguments passed to pipeline.run().
+
+        Returns
+        -------
+        list[EmpiricalData]
+            List of result EmpiricalData from each level that was processed.
+        """
+        results = []
+        for level in self.descend():
+            if target_depth is not None and level.depth != target_depth:
+                continue
+            if len(level.timeseries) == 0:
+                continue
+            if data_name is not None and level.get_timeseries_by_name(data_name) is None:
+                continue
+            result = level.run_pipeline(
+                pipeline,
+                data_name=data_name,
+                result_name=result_name,
+                **kwargs,
+            )
+            results.append(result)
+        return results
 
     def climb(self) -> t.Iterator["ExperimentLevel"]:
         """Climb the experiment structure."""
