@@ -37,7 +37,7 @@ class ColMeans(SummaryType, MultivariateSeriesInput, UnivariateSeriesOutput, Seg
         x: pd.DataFrame,
         col: t.Union[str, int, slice, None] = None,
         **kwargs,  # noqa: ARG002
-    ) -> pd.Series[int | float | complex]:
+    ) -> pd.Series:
         """Process the input dataframe and return the mean value of each column.
 
         Args:
