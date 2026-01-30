@@ -24,6 +24,11 @@ pip install mopipe
 
 The official documentation is available at [https://au-imclab.github.io/mopipe/](https://au-imclab.github.io/mopipe/).
 
+## Examples
+
+- [Example data processing pipeline](https://github.com/au-imclab/mopipe/blob/main/examples/basic_mocap_analysis.py)
+- [Example RQA analysis pipeline](https://github.com/au-imclab/mopipe/blob/main/examples/rqa_analysis.py) using dancing motion capture data.
+
 ## Contributing
 
 Contributions are welcome! Please refer to [CONTRIBUTING.md](https://github.com/au-imclab/mopipe/blob/main/CONTRIBUTING.md) for more information.

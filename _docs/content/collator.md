@@ -36,8 +36,6 @@ output_dir : Path
     The directory to save the collated data in.
 output_name : str
     The base name to save the collated data under.
-level : DataLevel
-    The level of the data to be read.
 
 <a id="mopipe.core.data.collator.MocapDataCollator.readers"></a>
 
@@ -72,12 +70,43 @@ def output_name() -> str
 
 The name to save the collated data under.
 
+<a id="mopipe.core.data.collator.MocapDataCollator.primary_reader"></a>
+
+#### primary\_reader
+
+```python
+@property
+def primary_reader() -> int
+```
+
+Index of the primary reader that determines the output sample rate.
+
+<a id="mopipe.core.data.collator.MocapDataCollator.set_primary_reader"></a>
+
+#### set\_primary\_reader
+
+```python
+def set_primary_reader(index: int) -> None
+```
+
+Set the primary reader by index.
+
+Parameters
+----------
+index : int
+    The index of the reader to set as primary.
+
+Raises
+------
+IndexError
+    If the index is out of range.
+
 <a id="mopipe.core.data.collator.MocapDataCollator.add_reader"></a>
 
 #### add\_reader
 
 ```python
-def add_reader(reader: AbstractReader) -> int
+def add_reader(reader: AbstractReader, *, is_primary: bool = False) -> int
 ```
 
 Add a reader to the collator.
@@ -86,6 +115,9 @@ Parameters
 ----------
 reader : AbstractReader
     The reader to be added.
+is_primary : bool, optional
+    Whether this reader should be the primary reader (determines output sample rate).
+    Defaults to False.
 
 Returns
 -------
@@ -97,13 +129,28 @@ int
 #### collate
 
 ```python
-def collate() -> DataFrame
+def collate(method: str = "linear") -> EmpiricalData
 ```
 
 Collate the data from the readers.
 
+Reads data from all readers, resamples non-primary data to match
+the primary reader's sample rate, truncates to the shortest length,
+and concatenates along columns.
+
+Parameters
+----------
+method : str, optional
+    Interpolation method for resampling: 'linear', 'cubic', or 'nearest'.
+    Defaults to 'linear'.
+
 Returns
 -------
-DataFrame
-    The collated data.
+EmpiricalData
+    The collated data with combined metadata.
+
+Raises
+------
+ValueError
+    If no readers have been added or sample rates cannot be determined.
 

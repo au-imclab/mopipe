@@ -203,6 +203,116 @@ def level_metadata(level_metadata: "MetaData") -> None
 
 Set the level metadata.
 
+<a id="mopipe.core.data.experiment.ExperimentLevel.get_timeseries_by_name"></a>
+
+#### get\_timeseries\_by\_name
+
+```python
+def get_timeseries_by_name(name: str) -> t.Optional["EmpiricalData"]
+```
+
+Look up a timeseries by name.
+
+Parameters
+----------
+name : str
+    The name of the timeseries to find.
+
+Returns
+-------
+EmpiricalData or None
+    The first matching timeseries, or None if not found.
+
+<a id="mopipe.core.data.experiment.ExperimentLevel.get_timeseries_by_id"></a>
+
+#### get\_timeseries\_by\_id
+
+```python
+def get_timeseries_by_id(data_id: str) -> t.Optional["EmpiricalData"]
+```
+
+Look up a timeseries by data ID.
+
+Parameters
+----------
+data_id : str
+    The ID of the timeseries to find.
+
+Returns
+-------
+EmpiricalData or None
+    The first matching timeseries, or None if not found.
+
+<a id="mopipe.core.data.experiment.ExperimentLevel.run_pipeline"></a>
+
+#### run\_pipeline
+
+```python
+def run_pipeline(pipeline: "Pipeline",
+                 data_name: t.Optional[str] = None,
+                 result_name: t.Optional[str] = None,
+                 *,
+                 store_result: bool = True,
+                 **kwargs) -> "EmpiricalData"
+```
+
+Run a pipeline on timeseries data at this level.
+
+Parameters
+----------
+pipeline : Pipeline
+    The pipeline to run.
+data_name : str, optional
+    Name of the timeseries to use as input. If None, uses the first available.
+result_name : str, optional
+    Name for the result timeseries. Defaults to "{source_name}_processed".
+store_result : bool, optional
+    Whether to store the result back on this level. Defaults to True.
+**kwargs
+    Additional keyword arguments passed to pipeline.run().
+
+Returns
+-------
+EmpiricalData
+    The result wrapped as a TimeseriesData.
+
+Raises
+------
+ValueError
+    If no timeseries data is available or the named timeseries is not found.
+
+<a id="mopipe.core.data.experiment.ExperimentLevel.run_pipeline_on_descendants"></a>
+
+#### run\_pipeline\_on\_descendants
+
+```python
+def run_pipeline_on_descendants(pipeline: "Pipeline",
+                                target_depth: t.Optional[int] = None,
+                                data_name: t.Optional[str] = None,
+                                result_name: t.Optional[str] = None,
+                                **kwargs) -> list["EmpiricalData"]
+```
+
+Run a pipeline on descendant levels that have timeseries data.
+
+Parameters
+----------
+pipeline : Pipeline
+    The pipeline to run.
+target_depth : int, optional
+    Only run on levels at this depth. If None, runs on all descendants with data.
+data_name : str, optional
+    Name of the timeseries to use as input on each level.
+result_name : str, optional
+    Name for the result timeseries on each level.
+**kwargs
+    Additional keyword arguments passed to pipeline.run().
+
+Returns
+-------
+list[EmpiricalData]
+    List of result EmpiricalData from each level that was processed.
+
 <a id="mopipe.core.data.experiment.ExperimentLevel.climb"></a>
 
 #### climb

@@ -81,7 +81,7 @@ Calculate the difference between the input series and a shifted version of itsel
 
 ```python
 def process(x: pd.DataFrame,
-            cols: pd.Index | None = None,
+            cols: pd.Index | t.Iterable[str] | None = None,
             shift: int = 1,
             **kwargs) -> pd.DataFrame
 ```
@@ -135,8 +135,7 @@ Process the input dataframe and fill gaps in the input series with the linear in
 ## RQAStats Objects
 
 ```python
-class RQAStats(AnalysisType, UnivariateSeriesInput, MultivariateSeriesOutput,
-               Segment)
+class RQAStats(AnalysisType, UnivariateSeriesInput, AnySeriesOutput, Segment)
 ```
 
 Calculate Recurrence Quantification Analysis (RQA) statistics for the input series.
@@ -174,8 +173,8 @@ Process the input series and return the RQA statistics.
 ## CrossRQAStats Objects
 
 ```python
-class CrossRQAStats(AnalysisType, MultivariateSeriesInput,
-                    MultivariateSeriesOutput, Segment)
+class CrossRQAStats(AnalysisType, MultivariateSeriesInput, AnySeriesOutput,
+                    Segment)
 ```
 
 Calculate Recurrence Quantification Analysis (RQA) statistics between two input series.
@@ -218,7 +217,7 @@ Process the input dataframe and return the RQA statistics between two input seri
 
 ```python
 class WindowedCrossRQAStats(AnalysisType, MultivariateSeriesInput,
-                            MultivariateSeriesOutput, Segment)
+                            AnySeriesOutput, Segment)
 ```
 
 Calculate Recurrence Quantification Analysis (RQA) statistics between two input series in a moving window.

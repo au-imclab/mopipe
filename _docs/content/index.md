@@ -9,7 +9,9 @@
 
 - [MoPipe](#mopipe)
   - [Installation](#installation)
+  - [Documentation](#documentation)
   - [Contributing](#contributing)
+  - [Development Environmnet](#development-environmnet)
   - [License](#license)
 
 ## Installation
@@ -17,6 +19,15 @@
 ```console
 pip install mopipe
 ```
+
+## Documentation
+
+The official documentation is available at [https://au-imclab.github.io/mopipe/](https://au-imclab.github.io/mopipe/).
+
+## Examples
+
+- [Example data processing pipeline](https://github.com/au-imclab/mopipe/blob/main/examples/basic_mocap_analysis.py)
+- [Example RQA analysis pipeline](https://github.com/au-imclab/mopipe/blob/main/examples/rqa_analysis.py) using dancing motion capture data.
 
 ## Contributing
 
